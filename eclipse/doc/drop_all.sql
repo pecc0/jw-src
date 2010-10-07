@@ -1,0 +1,15 @@
+﻿drop table jwadm.building_prop ;
+drop table jwadm.contract_prop ;
+drop table jwadm.object_prop ;
+drop table jwadm.object_design_prop ;
+drop table jwadm.task_prop;
+drop table jwadm.building_users  ;
+drop table jwadm.contract_conclusion ;
+drop table jwadm.passangers ;
+drop table jwadm.building ;
+drop table jwadm.contract ;
+drop table jwadm.object ;
+drop table jwadm.recipe ;
+drop table jwadm.object_design ;
+drop table jwadm.task ;
+drop table jwadm.player ;
