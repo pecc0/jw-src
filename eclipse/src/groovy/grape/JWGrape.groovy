@@ -1,10 +1,13 @@
 package groovy.grape
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Map;
 
 class JWGrape extends Grape {
 	private Map props = [:];
+	
+	private static List dependencies = [];
 	
 	public JWGrape() {
 	}
@@ -13,7 +16,7 @@ class JWGrape extends Grape {
 		props[key] = val;
 	}
 	
-	public def dl(Map<String, Object> dependency) {
+	public static void grab(Map<String, Object> dependency) {
 		dependency.autoDownload = true;
 		dependency.calleeDepth = dependency.calleeDepth?:GrapeIvy.DEFAULT_DEPTH + 1;
 		String srcConf = dependency.conf ?: 'default';
@@ -26,17 +29,38 @@ class JWGrape extends Grape {
 			dstConf = srcConf;
 		}
 		dependency.conf = srcConf;
-		URI[] cache = super.resolve(dependency);
+		dependency.dstConf = dstConf;
+		Grape.grab(dependency);
+		dependencies.add dependency
+	}
+	
+	public def copyAll() {
 		
-		String libRoot = props.libRoot ?: 'lib';
-		
-		cache.each {
-			File src = new File(it);
-			File dst = new File(libRoot, dstConf);
-			def reader = src.newReader()
-			dst.withWriter { writer -> writer << reader }
-			reader.close();
+		dependencies.each {
+			dependency ->
+			URI[] cache = Grape.resolve(dependency);
+			
+			String libRoot = props.libRoot ?: 'lib';
+			
+			File dstDir = new File(libRoot, dependency.dstConf);
+			
+			if (!dstDir.exists()) {
+				dstDir.mkdirs();
+			}
+			if (!dstDir.isDirectory()) {
+				throw new FileNotFoundException("$dstDir must be directory");
+			}
+			
+			cache.each {
+				File src = new File(it);
+				File dst = new File(dstDir, src.getName());
+				println ">>$dst"
+				def reader = src.newReader()
+				//dst.withWriter { writer -> writer << reader }
+				reader.close();
+			}
 		}
+		
 		
 		
 	}
