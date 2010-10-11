@@ -34,7 +34,6 @@
         
 		<!-- compile -->
 		<!--used for tests in other projects-->
-		<dependency org="at.tugraz" name="iaik_jce" rev="3.181" conf="compile->default"/>
 		<dependency org="org.hamcrest" name="hamcrest-core" rev="1.1" conf="compile->default" />
 		<dependency org="org.hamcrest" name="hamcrest-library" rev="1.1" conf="compile->default" />
 		<dependency org="org.jmock" name="jmock" rev="2.4.0" conf="compile->default" />
