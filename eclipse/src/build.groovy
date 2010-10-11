@@ -8,11 +8,16 @@ import org.apache.ivy.core.retrieve.RetrieveOptions;
 Ivy ivy = Ivy.newInstance();
 ivy.configure(new File('build-external/ivysettings.xml'))
 //ResolveOptions resolveOptions = (new ResolveOptions()).setConfs(['*']).setValidate(true);
-ResolveReport report = ivy.resolve(new File('lib/ivy.xml'));
+File ivyFile = new File('lib/ivy.xml');
+ResolveReport report = ivy.resolve(ivyFile);
 ModuleDescriptor md = report.getModuleDescriptor();
 RetrieveOptions options = new RetrieveOptions();
 options.setConfs(md.getConfigurationsNames());
-options.setSync true;
+options.setSync(true);
 
-ivy.retrieve(md.getModuleRevisionId(), 'lib/[conf]/[artifact].[ext]', options);
+//open the file for reading - else it is deleted for some magical reason
+ivyFile.withReader {
+	ivy.retrieve(md.getModuleRevisionId(), 'lib/[conf]/[artifact].[ext]', options);
+	}
+
 println 'complete'
