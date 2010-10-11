@@ -1,23 +1,18 @@
-//groovy.grape.Grape.initGrape()
-import groovy.grape.Grape;
-import groovy.grape.GrapeIvy;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.Ivy;
+import org.apache.ivy.core.resolve.ResolveOptions;
+import org.apache.ivy.core.retrieve.RetrieveOptions;
 
-def jwgrape = new GroovyClassLoader().parseClass(new File('src/groovy/grape/JWGrape.groovy')).newInstance();
 
-jwgrape.grab([group:'org.hibernate', module:'hibernate-tools', version:'3.2.3.GA', conf:'ear->default'])
+Ivy ivy = Ivy.newInstance();
+ivy.configure(new File('build-external/ivysettings.xml'))
+//ResolveOptions resolveOptions = (new ResolveOptions()).setConfs(['*']).setValidate(true);
+ResolveReport report = ivy.resolve(new File('lib/ivy.xml'));
+ModuleDescriptor md = report.getModuleDescriptor();
+RetrieveOptions options = new RetrieveOptions();
+options.setConfs(md.getConfigurationsNames());
+options.setSync true;
 
-jwgrape.grab([group:'org.hibernate', module:'jtidy', version:'r8-21122004', conf:'ear->default'])
-
-jwgrape.copyAll();
-
-//Grape.grab([group:'org.hibernate', module:'hibernate-tools', version:'3.2.3.GA']);
-
-//println Grape.resolve([group:'org.hibernate', module:'hibernate-tools', version:'3.2.3.GA', autoDownload:true, calleeDepth:4])
-
-//println Grape.resolve([group:'org.hibernate', module:'hibernate-tools', version:'3.2.3.GA', blabla:'dsds', autoDownload:true, calleeDepth:4]);
-
-println Grape.enumerateGrapes();
+ivy.retrieve(md.getModuleRevisionId(), 'lib/[conf]/[artifact].[ext]', options);
 println 'complete'
-
-
-
