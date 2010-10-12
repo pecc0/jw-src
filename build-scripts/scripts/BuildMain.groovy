@@ -30,6 +30,7 @@ class BuildMain extends Script {
 		File f = new File(path);
 		if (f.exists()) {
 			ConfigSlurper cs = new ConfigSlurper();
+			cs.binding = config.flatten();
 			config.merge(cs.parse(f.toURI().toURL()))
 		}
 	}
