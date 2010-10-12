@@ -37,7 +37,7 @@ class BuildMain extends Script {
 	
     	def userHome = System.properties['user.home'];
     	
-		scriptsRoot = args.length ? args[0] : 'scripts';
+		scriptsRoot = args.length > 0 ? args[0] : 'scripts';
     	
     	config = new ConfigSlurper().parse(new File("$scriptsRoot/build.conf").toURI().toURL());
     	
@@ -57,6 +57,13 @@ class BuildMain extends Script {
 		
 	}
 	
+	public static BuildMain inst(String[] args) {
+		BuildMain script = new BuildMain();
+		script.args = args;
+		script.init();
+		return script;
+	}
+	
 	def ivy() {
 		//cl.setDebug true;
 		//println this.class.classLoader;
@@ -66,14 +73,12 @@ class BuildMain extends Script {
 	}
 	
 	def run() {
-		init();
 		ivy();
 		println 'complete'
 	}
 	
 	public static void main(String[] args) {
-		BuildMain script = new BuildMain();
-		script.args = args;
+		BuildMain script = inst(args);
 		script.run();
 	}
 }
