@@ -6,7 +6,7 @@ import org.apache.ivy.core.retrieve.RetrieveOptions;
 
 class BuildIvy {
     	
-    public void run(ConfigObject config) {
+    public void run1(ConfigObject config) {
     
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("${config.scriptsRoot}/ivysettings.xml"))

@@ -1,0 +1,1 @@
+this.class.classLoader.parseClass(new File('scripts/BuildMain.groovy')).main([] as String[]);
