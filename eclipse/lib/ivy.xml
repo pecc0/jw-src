@@ -13,6 +13,7 @@
 
 	<configurations>
 		<conf name="jar" description="Libraries for deployed jar" />
+		<conf name="generate-entities" description="For generating persistence entities" />
 		<conf name="compile" extends="jar" description="Compiling java classes" />
 		<conf name="test" extends="compile" description="To compile and run java tests" />
 	</configurations>
@@ -30,7 +31,9 @@
 		<dependency org="jaxen" name="jaxen" rev="1.1.1" conf="jar->default" />
 		<dependency org="com.jcraft" name="jsch" rev="0.1.42" conf="jar->default" />
 		<dependency org="log4j" name="log4j" rev="1.2.15" conf="jar->default" transitive="false"/>
+        
         	
+        <dependency org="org.hibernate" name="hibernate-tools" rev="3.2.4.GA" conf="compile->default; generate-entities->default" />
         
 		<!-- compile -->
 		<!--used for tests in other projects-->
@@ -40,7 +43,6 @@
 		<dependency org="org.jmock" name="jmock-junit4" rev="2.4.0" conf="compile->default" />
 		
 		<!-- test -->
-		
 		<dependency org="junit" name="junit" rev="4.6" conf="test->default" />
 		
 	</dependencies>
