@@ -1,8 +1,8 @@
+import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.report.ResolveReport;
-import org.apache.ivy.Ivy;
-import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
+
 
 class BuildIvy {
     	

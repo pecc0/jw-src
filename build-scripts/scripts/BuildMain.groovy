@@ -18,7 +18,7 @@ class BuildMain extends Script {
 			
 		} else {
 			println "downloading from $address...";
-			result.withWriter {
+			result.withOutputStream {
 				out ->
 				out << new URL(address).openStream()
 			}
