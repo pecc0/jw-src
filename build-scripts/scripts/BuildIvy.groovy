@@ -1,7 +1,10 @@
+import groovy.util.ConfigObject;
+
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
+import org.apache.ivy.core.settings.IvySettings;
 
 
 class BuildIvy {
@@ -9,7 +12,14 @@ class BuildIvy {
     public void run(ConfigObject config) {
     
         Ivy ivy = Ivy.newInstance();
+		
+		//I can't use settings.addAllVariables
+		config.flatten().each {
+			ivy.settings.setVariable it.key, it.value
+		}
+		
         ivy.configure(new File(config.ivy.settings));
+		
         //ResolveOptions resolveOptions = (new ResolveOptions()).setConfs(['*']).setValidate(true);
         File ivyFile = new File(config.ivy.xml);
         if (!ivyFile.exists()) {
@@ -21,7 +31,7 @@ class BuildIvy {
         RetrieveOptions options = new RetrieveOptions();
         options.setConfs(md.getConfigurationsNames());
         options.setSync(true);
-        
+		
         //open the file for reading - else it is deleted for some magical reason
         ivyFile.withReader {
         	ivy.retrieve(md.getModuleRevisionId(), 'lib/[conf]/[artifact].[ext]', options);
