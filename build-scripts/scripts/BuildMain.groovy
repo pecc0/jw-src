@@ -30,7 +30,7 @@ class BuildMain extends Script {
 		File f = new File(path);
 		if (f.exists()) {
 			ConfigSlurper cs = new ConfigSlurper();
-			cs.binding = config.flatten();
+			cs.binding = config.flatten() + System.properties;
 			config.merge(cs.parse(f.toURI().toURL()))
 		}
 	}
@@ -43,7 +43,7 @@ class BuildMain extends Script {
 		
 		ConfigSlurper cs = new ConfigSlurper();
 		
-		cs.binding = [scriptsRoot:scriptsRoot];
+		cs.binding = [scriptsRoot:scriptsRoot] + System.properties;
 		
     	config = cs.parse(new File("$scriptsRoot/build.conf").toURI().toURL());
 		
@@ -51,16 +51,15 @@ class BuildMain extends Script {
 		
 		config.setConfigFile(new File("$scriptsRoot/build.conf").toURI().toURL());
 		
-    	File ivyJar = download("${config.jar.ivy}", "$userHome/.ivy2/jars");
-    	
-    	this.class.classLoader.addURL(ivyJar.toURI().toURL());
-    	
     	//Add the project specific build.properties
     	mergeConfig(config, 'build.conf');
     	
     	//Add the project specific local.build.properties
     	mergeConfig(config, 'local.build.conf');
 		
+		//Load all needed classes here ...
+		File ivyJar = download(config.ivy.lib, config.ivy.jars.dir);
+		this.class.classLoader.addURL(ivyJar.toURI().toURL());
 	}
 	
 	public static BuildMain inst(String[] args) {

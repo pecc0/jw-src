@@ -9,9 +9,9 @@ class BuildIvy {
     public void run(ConfigObject config) {
     
         Ivy ivy = Ivy.newInstance();
-        ivy.configure(new File(config.settings.ivy));
+        ivy.configure(new File(config.ivy.settings));
         //ResolveOptions resolveOptions = (new ResolveOptions()).setConfs(['*']).setValidate(true);
-        File ivyFile = new File('lib/ivy.xml');
+        File ivyFile = new File(config.ivy.xml);
         if (!ivyFile.exists()) {
         	println "Can't find $ivyFile";
         	return;
