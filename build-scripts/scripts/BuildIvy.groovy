@@ -6,10 +6,10 @@ import org.apache.ivy.core.retrieve.RetrieveOptions;
 
 class BuildIvy {
     	
-    public void run1(ConfigObject config) {
+    public void run(ConfigObject config) {
     
         Ivy ivy = Ivy.newInstance();
-        ivy.configure(new File("${config.scriptsRoot}/ivysettings.xml"))
+        ivy.configure(new File(config.settings.ivy));
         //ResolveOptions resolveOptions = (new ResolveOptions()).setConfs(['*']).setValidate(true);
         File ivyFile = new File('lib/ivy.xml');
         if (!ivyFile.exists()) {

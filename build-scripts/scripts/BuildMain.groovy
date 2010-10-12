@@ -1,10 +1,10 @@
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.Script;
+import groovy.util.ConfigObject;
+import groovy.util.ConfigSlurper;
 
 class BuildMain extends Script {
 	ConfigObject config;
-	
-	def scriptsRoot
 	
 	def download(address, dst)
 	{
@@ -29,7 +29,8 @@ class BuildMain extends Script {
 	def mergeConfig(ConfigObject config, path) {
 		File f = new File(path);
 		if (f.exists()) {
-			config.merge(new ConfigSlurper().parse(f.toURI().toURL()))
+			ConfigSlurper cs = new ConfigSlurper();
+			config.merge(cs.parse(f.toURI().toURL()))
 		}
 	}
 	
@@ -37,17 +38,21 @@ class BuildMain extends Script {
 	
     	def userHome = System.properties['user.home'];
     	
-		scriptsRoot = args.length > 0 ? args[0] : 'scripts';
-    	
-    	config = new ConfigSlurper().parse(new File("$scriptsRoot/build.conf").toURI().toURL());
-    	
-    	config["scriptsRoot"] = scriptsRoot;
-    	
+		def scriptsRoot = args.length > 0 ? args[0] : 'scripts';
+		
+		ConfigSlurper cs = new ConfigSlurper();
+		
+		cs.binding = [scriptsRoot:scriptsRoot];
+		
+    	config = cs.parse(new File("$scriptsRoot/build.conf").toURI().toURL());
+		
+		config.scriptsRoot = scriptsRoot;
+		
+		config.setConfigFile(new File("$scriptsRoot/build.conf").toURI().toURL());
+		
     	File ivyJar = download("${config.jar.ivy}", "$userHome/.ivy2/jars");
     	
     	this.class.classLoader.addURL(ivyJar.toURI().toURL());
-    	
-    	
     	
     	//Add the project specific build.properties
     	mergeConfig(config, 'build.conf');
@@ -67,9 +72,13 @@ class BuildMain extends Script {
 	def ivy() {
 		//cl.setDebug true;
 		//println this.class.classLoader;
-		def buildIvy = this.class.classLoader.parseClass(new File("$scriptsRoot/BuildIvy.groovy")).newInstance()
+		def buildIvy = this.class.classLoader.parseClass(new File("${config.scriptsRoot}/BuildIvy.groovy")).newInstance()
 		
-		buildIvy.run1(config);
+		buildIvy.run(config);
+	}
+	
+	def clean() {
+		
 	}
 	
 	def run() {
