@@ -2,16 +2,16 @@
 <ivysettings>
 	<settings defaultResolver="bm" />
 
-<!--	<typedef name="svn" classname="fm.last.ivy.plugins.svnresolver.SvnResolver" />-->
+	<typedef name="svn" classname="fm.last.ivy.plugins.svnresolver.SvnResolver" />
 
 	<resolvers>
-		<chain name="bm" returnFirst="true">
-<!--			<svn name="ivysvn" m2compatible="true" repositoryRoot="${svnRepositoryRoot}"-->
-<!--				userName="${svnUserName}" userPassword="${svnUserPassword}" binaryDiff="${svnBinaryDiff}">-->
-<!--				<ivy pattern="repository/[organisation]/[module]/[revision]/ivy.xml" />-->
-<!--				<artifact-->
-<!--					pattern="repository/[organisation]/[module]/[revision]/[artifact].[ext]" />-->
-<!--			</svn>-->
+		<chain name="jw" returnFirst="true">
+			<svn name="ivysvn" m2compatible="true" repositoryRoot="${svnRepositoryRoot}"
+				userName="${svnUserName}" userPassword="${svnUserPassword}" binaryDiff="${svnBinaryDiff}">
+				<ivy pattern="repository/[organisation]/[module]/[revision]/ivy.xml" />
+				<artifact
+					pattern="repository/[organisation]/[module]/[revision]/[artifact].[ext]" />
+			</svn>
 
 			<url name="jboss" m2compatible="true">
 				<artifact

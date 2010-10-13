@@ -1,3 +1,5 @@
+import java.io.File;
+
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.Script;
 import groovy.util.ConfigObject;
@@ -35,6 +37,13 @@ class BuildMain extends Script {
 		}
 	}
 	
+	def addCP(String dir, pattern) {
+		new File( dir ).eachFileMatch(pattern) {
+			f -> 
+			this.class.classLoader.addClasspath(f.getAbsolutePath());
+		}
+	}
+	
 	def init() {
     	def userHome = System.properties['user.home'];
     	
@@ -66,7 +75,9 @@ class BuildMain extends Script {
 	
 	def ivy() {
 		File ivyJar = download(config.ivy.lib, config.ivy.jars.dir);
-		this.class.classLoader.addURL(ivyJar.toURI().toURL());
+		this.class.classLoader.addClasspath(ivyJar.getAbsolutePath());
+		this.class.classLoader.addClasspath(config.ivy.jars.dir + '/ivysvnresolver.jar')
+		this.class.classLoader.addClasspath(config.ivy.jars.dir + '/svnkit.jar');
 		
 		//println this.class.classLoader;
 		def buildIvy = this.class.classLoader.parseClass(new File("${config.scriptsRoot}/BuildIvy.groovy")).newInstance()
@@ -74,12 +85,23 @@ class BuildMain extends Script {
 		buildIvy.run(config);
 	}
 	
+	def reveng() {
+		ivy();
+		
+		//this.class.classLoader.addClasspath(config.reveng.hibernate.tools.jar);
+		addCP('lib/generate-entities/', ~/.*\.jar/)
+
+		def buildRevEng = this.class.classLoader.parseClass(new File("${config.scriptsRoot}/BuildRevEng.groovy")).newInstance()
+		buildRevEng.run(config);
+	}
+	
 	def clean() {
 		
 	}
 	
 	def run() {
-		ivy();
+		init();
+		reveng()
 		println 'complete'
 	}
 	

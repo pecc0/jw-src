@@ -13,9 +13,16 @@ class BuildIvy {
     
         Ivy ivy = Ivy.newInstance();
 		
+		if (!config.containsKey('svnUserName') || !config.containsKey('svnUserPassword')) {
+			println "Please, add your svnUserName and svnUserPassword in local.build.conf: \n" +
+					"  svnUserName='username'\n" +
+					"  svnUserPassword='password'\n";
+			throw new RuntimeException("No svnUserName and svnUserPassword properties");
+		}
+		
 		//I can't use settings.addAllVariables
 		config.flatten().each {
-			ivy.settings.setVariable it.key, it.value
+			ivy.settings.setVariable it.key.toString(), it.value.toString()
 		}
 		
         ivy.configure(new File(config.ivy.settings));
@@ -27,6 +34,10 @@ class BuildIvy {
         	return;
         }
         ResolveReport report = ivy.resolve(ivyFile);
+		if (report.hasError()) {
+			throw new RuntimeException("Error in retrieve");
+		}
+		//if (report.)
         ModuleDescriptor md = report.getModuleDescriptor();
         RetrieveOptions options = new RetrieveOptions();
         options.setConfs(md.getConfigurationsNames());
