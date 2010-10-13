@@ -37,10 +37,16 @@ class BuildMain extends Script {
 		}
 	}
 	
+	def addCP(String dir) {
+		addCP(dir, ~/.*\.jar/);
+	}
+	
 	def addCP(String dir, pattern) {
+		GroovyClassLoader gcl = this.class.classLoader;
+		println gcl.getURLs()
 		new File( dir ).eachFileMatch(pattern) {
 			f -> 
-			this.class.classLoader.addClasspath(f.getAbsolutePath());
+			gcl.addClasspath(f.getAbsolutePath());
 		}
 	}
 	
@@ -59,25 +65,28 @@ class BuildMain extends Script {
 		
 		config.setConfigFile(new File("$scriptsRoot/build.conf").toURI().toURL());
 		
-    	//Add the project specific build.properties
+    	//Add the project specific conf
     	mergeConfig(config, 'build.conf');
     	
-    	//Add the project specific local.build.properties
+    	//Add the project specific conf
     	mergeConfig(config, 'local.build.conf');
+		
+		//Add PC specific conf
+		mergeConfig(config, "${config.ivy.dir}/local.build.conf");
 	}
 	
 	public static BuildMain inst(String[] args) {
 		BuildMain script = new BuildMain();
 		script.args = args;
-		script.init();
 		return script;
 	}
 	
 	def ivy() {
-		File ivyJar = download(config.ivy.lib, config.ivy.jars.dir);
-		this.class.classLoader.addClasspath(ivyJar.getAbsolutePath());
-		this.class.classLoader.addClasspath(config.ivy.jars.dir + '/ivysvnresolver.jar')
-		this.class.classLoader.addClasspath(config.ivy.jars.dir + '/svnkit.jar');
+		download(config.ivy.lib.url, config.ivy.jars.dir);
+		download(config.ivy.svnresolver.url, config.ivy.jars.dir);
+		download(config.ivy.svnkit.url, config.ivy.jars.dir);
+		
+		addCP(config.ivy.jars.dir)
 		
 		//println this.class.classLoader;
 		def buildIvy = this.class.classLoader.parseClass(new File("${config.scriptsRoot}/BuildIvy.groovy")).newInstance()
@@ -89,7 +98,7 @@ class BuildMain extends Script {
 		ivy();
 		
 		//this.class.classLoader.addClasspath(config.reveng.hibernate.tools.jar);
-		addCP('lib/generate-entities/', ~/.*\.jar/)
+		addCP('lib/generate-entities/')
 
 		def buildRevEng = this.class.classLoader.parseClass(new File("${config.scriptsRoot}/BuildRevEng.groovy")).newInstance()
 		buildRevEng.run(config);

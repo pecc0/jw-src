@@ -1,3 +1,4 @@
+import groovy.lang.GroovyClassLoader;
 import groovy.util.ConfigObject;
 
 import org.apache.ivy.Ivy;
@@ -10,7 +11,7 @@ import org.apache.ivy.core.settings.IvySettings;
 class BuildIvy {
     	
     public void run(ConfigObject config) {
-    
+		GroovyClassLoader gcl = this.class.classLoader;
         Ivy ivy = Ivy.newInstance();
 		
 		if (!config.containsKey('svnUserName') || !config.containsKey('svnUserPassword')) {
@@ -25,8 +26,16 @@ class BuildIvy {
 			ivy.settings.setVariable it.key.toString(), it.value.toString()
 		}
 		
-        ivy.configure(new File(config.ivy.settings));
+		gcl.getURLs().each {
+			ivy.settings.addClasspathURL it;
+		}
 		
+		try {
+			ivy.configure(new File(config.ivy.settings));
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
         //ResolveOptions resolveOptions = (new ResolveOptions()).setConfs(['*']).setValidate(true);
         File ivyFile = new File(config.ivy.xml);
         if (!ivyFile.exists()) {

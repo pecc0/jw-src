@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivysettings>
-	<settings defaultResolver="bm" />
+	<settings defaultResolver="jw" />
 
 	<typedef name="svn" classname="fm.last.ivy.plugins.svnresolver.SvnResolver" />
 

@@ -31,7 +31,6 @@
 		<dependency org="jaxen" name="jaxen" rev="1.1.1" conf="jar->default" />
 		<dependency org="com.jcraft" name="jsch" rev="0.1.42" conf="jar->default" />
 		<dependency org="log4j" name="log4j" rev="1.2.15" conf="jar->default" transitive="false"/>
-        <dependency org="postgresql" name="postgresql" rev="8.4-701.jdbc4"/>
         
 		<!--generate-entities-->
 		<!--Dependencies of hibernate-tools-->
@@ -53,7 +52,8 @@
 		<dependency org="freemarker" name="freemarker" rev="2.3.8" conf="generate-entities->default" />
 		
 		<!--JDBC driver-->
-		<dependency org="oracle" name="ojdbc6" rev="11.2.0.1.0" conf="generate-entities->default" />
+<!--		<dependency org="oracle" name="ojdbc6" rev="11.2.0.1.0" conf="generate-entities->default" />-->
+		<dependency org="postgresql" name="postgresql" rev="8.4-701.jdbc4"/>
 		
 		<!-- compile -->
 		<!--used for tests in other projects-->
