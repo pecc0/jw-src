@@ -36,7 +36,6 @@ class BuildMain extends Script {
 	}
 	
 	def init() {
-	
     	def userHome = System.properties['user.home'];
     	
 		def scriptsRoot = args.length > 0 ? args[0] : 'scripts';
@@ -56,8 +55,6 @@ class BuildMain extends Script {
     	
     	//Add the project specific local.build.properties
     	mergeConfig(config, 'local.build.conf');
-		
-		
 	}
 	
 	public static BuildMain inst(String[] args) {
