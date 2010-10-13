@@ -57,9 +57,7 @@ class BuildMain extends Script {
     	//Add the project specific local.build.properties
     	mergeConfig(config, 'local.build.conf');
 		
-		//Load all needed classes here ...
-		File ivyJar = download(config.ivy.lib, config.ivy.jars.dir);
-		this.class.classLoader.addURL(ivyJar.toURI().toURL());
+		
 	}
 	
 	public static BuildMain inst(String[] args) {
@@ -70,7 +68,9 @@ class BuildMain extends Script {
 	}
 	
 	def ivy() {
-		//cl.setDebug true;
+		File ivyJar = download(config.ivy.lib, config.ivy.jars.dir);
+		this.class.classLoader.addURL(ivyJar.toURI().toURL());
+		
 		//println this.class.classLoader;
 		def buildIvy = this.class.classLoader.parseClass(new File("${config.scriptsRoot}/BuildIvy.groovy")).newInstance()
 		
