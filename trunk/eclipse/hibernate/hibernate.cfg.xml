@@ -4,11 +4,11 @@
 		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <property name="hibernate.connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
-        <property name="hibernate.connection.password">BNGADM</property>
-        <property name="hibernate.connection.url">jdbc:oracle:thin:@192.168.2.11:1521:BILBON</property>
-        <property name="hibernate.connection.username">BNGADM</property>
-        <property name="hibernate.default_schema">BNGARC</property>
-        <property name="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</property>
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+<!--    <property name="hibernate.connection.password"></property> set this in your local conf file-->
+        <property name="hibernate.connection.url">jdbc:postgresql://84.238.192.10:5432/jWorld</property>
+        <property name="hibernate.connection.username">jWorldADM</property>
+        <property name="hibernate.default_schema">jwadm</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
     </session-factory>
 </hibernate-configuration>
