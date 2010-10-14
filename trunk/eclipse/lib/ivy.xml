@@ -31,6 +31,7 @@
 		<dependency org="jaxen" name="jaxen" rev="1.1.1" conf="jar->default" />
 		<dependency org="com.jcraft" name="jsch" rev="0.1.42" conf="jar->default" />
 		<dependency org="log4j" name="log4j" rev="1.2.15" conf="jar->default" transitive="false"/>
+        <dependency org="javax.persistence" name="persistence-api" rev="1.0" conf="jar->default" />
         
 		<!--generate-entities-->
 		<!--Dependencies of hibernate-tools-->
