@@ -50,6 +50,7 @@
 		<dependency org="org.slf4j" name="slf4j-log4j12" rev="1.5.8" conf="generate-entities->default" />
 		<dependency org="org.apache" name="log4j" rev="1.2.15" conf="generate-entities->default" />
 		<dependency org="freemarker" name="freemarker" rev="2.3.8" conf="generate-entities->default" />
+		<dependency org="cglib" name="cglib" rev="2.2" conf="generate-entities->default" />
 		
 		<!--JDBC driver-->
 <!--		<dependency org="oracle" name="ojdbc6" rev="11.2.0.1.0" conf="generate-entities->default" />-->

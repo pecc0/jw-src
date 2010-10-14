@@ -101,7 +101,6 @@ class BuildMain extends Script {
 	def reveng() {
 		ivy();
 		
-		//this.class.classLoader.addClasspath(config.reveng.hibernate.tools.jar);
 		addCP('lib/generate-entities/')
 		
 		def buildRevEng = this.class.classLoader.parseClass(new File("${config.scriptsRoot}/BuildRevEng.groovy")).newInstance()

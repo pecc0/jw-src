@@ -1,4 +1,5 @@
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.PropertySet;
 import org.hibernate.tool.ant.Hbm2JavaExporterTask;
 import org.hibernate.tool.ant.HibernateToolTask;
@@ -31,7 +32,8 @@ class BuildRevEng {
 				return config.toProperties();
 			};		
 		}
-		jdbcConf.setConfigurationFile(new File('hibernate/hibernate.cfg.xml'));
+		jdbcConf.setConfigurationFile(new File(config.reveng.hibernate.cfg.xml));
+		jdbcConf.setRevEngFile(new Path(project, config.reveng.hibernate.revengxml))
 		
 		//I'm so glad that I use groovy
 		htt.configurationTask = jdbcConf;
@@ -40,7 +42,7 @@ class BuildRevEng {
 		hbm2Java.setEjb3(true);
 		
 		hbm2Java.addConfiguredPropertySet(ps)
-		htt.setDestDir(new File('hibernate/generated'));
+		htt.setDestDir(new File(config.reveng.dest.dir));
 		htt.setProject project;
 		
 		try {
