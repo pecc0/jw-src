@@ -4,5 +4,26 @@
 	<classpathentry kind="src" path="scripts"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_SUPPORT"/>
+	<classpathentry kind="lib" path="lib/test/commons-beanutils.jar"/>
+	<classpathentry kind="lib" path="lib/test/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/test/commons-net.jar"/>
+	<classpathentry kind="lib" path="lib/test/dom4j.jar"/>
+	<classpathentry kind="lib" path="lib/test/hamcrest-core.jar"/>
+	<classpathentry kind="lib" path="lib/test/hamcrest-library.jar"/>
+	<classpathentry kind="lib" path="lib/test/hibernate-annotations.jar"/>
+	<classpathentry kind="lib" path="lib/test/hibernate-commons-annotations.jar"/>
+	<classpathentry kind="lib" path="lib/test/hibernate-core.jar"/>
+	<classpathentry kind="lib" path="lib/test/hibernate-ehcache.jar"/>
+	<classpathentry kind="lib" path="lib/test/hibernate-entitymanager.jar"/>
+	<classpathentry kind="lib" path="lib/test/hibernate-search.jar"/>
+	<classpathentry kind="lib" path="lib/test/hibernate-validator.jar"/>
+	<classpathentry kind="lib" path="lib/test/jaxen.jar"/>
+	<classpathentry kind="lib" path="lib/test/jmock-junit4.jar"/>
+	<classpathentry kind="lib" path="lib/test/jmock.jar"/>
+	<classpathentry kind="lib" path="lib/test/jsch.jar"/>
+	<classpathentry kind="lib" path="lib/test/junit.jar"/>
+	<classpathentry kind="lib" path="lib/test/log4j.jar"/>
+	<classpathentry kind="lib" path="lib/test/persistence-api.jar"/>
+	<classpathentry kind="lib" path="lib/test/postgresql.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
