@@ -42,10 +42,15 @@ class BuildMain extends Script {
 	}
 	
 	def addCP(String dir, pattern) {
-		GroovyClassLoader gcl = this.class.classLoader;
-		println gcl.getURLs()
+		addCP(this.class.classLoader, dir, pattern);
+	}
+	
+	static def addCP(GroovyClassLoader gcl, String dir, pattern) {
+		//println gcl.
+		
 		new File( dir ).eachFileMatch(pattern) {
 			f -> 
+			//println ">>$f";
 			gcl.addClasspath(f.getAbsolutePath());
 		}
 	}
@@ -87,11 +92,10 @@ class BuildMain extends Script {
 		download(config.ivy.svnkit.url, config.ivy.jars.dir);
 		
 		addCP(config.ivy.jars.dir)
-		
-		//println this.class.classLoader;
+
 		def buildIvy = this.class.classLoader.parseClass(new File("${config.scriptsRoot}/BuildIvy.groovy")).newInstance()
 		
-		buildIvy.run(config);
+		buildIvy.run(config, this);
 	}
 	
 	def reveng() {
@@ -99,9 +103,9 @@ class BuildMain extends Script {
 		
 		//this.class.classLoader.addClasspath(config.reveng.hibernate.tools.jar);
 		addCP('lib/generate-entities/')
-
+		
 		def buildRevEng = this.class.classLoader.parseClass(new File("${config.scriptsRoot}/BuildRevEng.groovy")).newInstance()
-		buildRevEng.run(config);
+		buildRevEng.run(config, this);
 	}
 	
 	def clean() {

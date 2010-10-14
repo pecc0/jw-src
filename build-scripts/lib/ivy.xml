@@ -53,7 +53,7 @@
 		
 		<!--JDBC driver-->
 <!--		<dependency org="oracle" name="ojdbc6" rev="11.2.0.1.0" conf="generate-entities->default" />-->
-		<dependency org="postgresql" name="postgresql" rev="8.4-701.jdbc4"/>
+		<dependency org="postgresql" name="postgresql" rev="8.4-701.jdbc3"/>
 		
 		<!-- compile -->
 		<!--used for tests in other projects-->

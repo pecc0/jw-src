@@ -7,7 +7,9 @@ import groovy.util.ConfigObject;
 
 
 class BuildRevEng {
-	public void run(ConfigObject config) {
+	public void run(ConfigObject config, main) {
+		this.class.classLoader.addClasspath(config.scriptsRoot);
+		//main.addCP(this.class.classLoader.parent, config.scriptsRoot, ~/.*(\.jar|\.properties)/);
 		Project project = new Project();
 		HibernateToolTask htt = new HibernateToolTask();
 		JDBCConfigurationTask jdbcConf = htt.createJDBCConfiguration();

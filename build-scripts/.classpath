@@ -4,8 +4,24 @@
 	<classpathentry kind="src" path="scripts"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_SUPPORT"/>
-	<classpathentry kind="lib" path="C:/Documents and Settings/PetkoLtd/.ivy2/jars/ivy-2.2.0.jar" sourcepath="ivy-2.2.0-sources.jar"/>
-	<classpathentry kind="lib" path="C:/Documents and Settings/PetkoLtd/.ivy2/jars/ivysvnresolver.jar"/>
-	<classpathentry kind="lib" path="C:/Documents and Settings/PetkoLtd/.ivy2/jars/svnkit.jar"/>
+	<classpathentry kind="lib" path="lib/generate-entities/ant-launcher.jar"/>
+	<classpathentry kind="lib" path="lib/generate-entities/ant.jar"/>
+	<classpathentry kind="lib" path="lib/generate-entities/commons-collections.jar"/>
+	<classpathentry kind="lib" path="lib/generate-entities/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/generate-entities/dom4j.jar"/>
+	<classpathentry kind="lib" path="lib/generate-entities/freemarker.jar"/>
+	<classpathentry kind="lib" path="lib/generate-entities/hibernate-annotations.jar"/>
+	<classpathentry kind="lib" path="lib/generate-entities/hibernate-commons-annotations.jar"/>
+	<classpathentry kind="lib" path="lib/generate-entities/hibernate-core.jar"/>
+	<classpathentry kind="lib" path="lib/generate-entities/hibernate-entitymanager.jar"/>
+	<classpathentry kind="lib" path="lib/generate-entities/hibernate-tools.jar"/>
+	<classpathentry kind="lib" path="lib/generate-entities/hibernate-validator.jar"/>
+	<classpathentry kind="lib" path="lib/generate-entities/log4j.jar"/>
+	<classpathentry kind="lib" path="lib/generate-entities/postgresql.jar"/>
+	<classpathentry kind="lib" path="lib/generate-entities/slf4j-api.jar"/>
+	<classpathentry kind="lib" path="lib/generate-entities/slf4j-log4j12.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Petko/.ivy2/jars/ivy-2.2.0.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Petko/.ivy2/jars/ivysvnresolver.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Petko/.ivy2/jars/svnkit.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

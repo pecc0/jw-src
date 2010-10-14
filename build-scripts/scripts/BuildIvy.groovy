@@ -6,12 +6,16 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.plugins.resolver.DependencyResolver;
 
 
 class BuildIvy {
     	
-    public void run(ConfigObject config) {
-		GroovyClassLoader gcl = this.class.classLoader;
+    public void run(ConfigObject config, main) {
+		GroovyClassLoader gcl = this.class.classLoader.parent;
+		//println '>>>' + fm.last.ivy.plugins.svnresolver.SvnResolver.class.classLoader
+		//println '>>>' + DependencyResolver.class.classLoader
+		
         Ivy ivy = Ivy.newInstance();
 		
 		if (!config.containsKey('svnUserName') || !config.containsKey('svnUserPassword')) {
