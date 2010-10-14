@@ -35,6 +35,8 @@ class BuildRevEng {
 		jdbcConf.setConfigurationFile(new File(config.reveng.hibernate.cfg.xml));
 		jdbcConf.setRevEngFile(new Path(project, config.reveng.hibernate.revengxml))
 		
+		jdbcConf.setPackageName config.reveng.hibernate.packagename;
+		
 		//I'm so glad that I use groovy
 		htt.configurationTask = jdbcConf;
 		
