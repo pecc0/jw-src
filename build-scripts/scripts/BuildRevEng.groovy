@@ -13,7 +13,7 @@ class BuildRevEng {
 		this.class.classLoader.addClasspath(config.scriptsRoot); //for log4j.properties
 		
 		if (!config.flatten().containsKey('hibernate.connection.password')) {
-			println "Please, add your svnUserName and hibernate.connection.password in local.build.conf: \n" +
+			println "Please, add your hibernate.connection.password in local.build.conf: \n" +
 					"  hibernate.connection.password='the pass'\n"
 			throw new RuntimeException("No hibernate.connection.password properties");
 		}
