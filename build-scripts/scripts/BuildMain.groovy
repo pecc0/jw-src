@@ -8,6 +8,9 @@ import groovy.util.ConfigSlurper;
 class BuildMain extends Script {
 	ConfigObject config;
 	
+	def buildIvy;
+	def buildRevEng; 
+	
 	def download(address, dst)
 	{
 		File dstDir = new File(dst);
@@ -56,28 +59,30 @@ class BuildMain extends Script {
 	}
 	
 	def init() {
-    	def userHome = System.properties['user.home'];
-    	
-		def scriptsRoot = args.length > 0 ? args[0] : 'scripts';
-		
-		ConfigSlurper cs = new ConfigSlurper();
-		
-		cs.binding = [scriptsRoot:scriptsRoot] + System.properties;
-		
-    	config = cs.parse(new File("$scriptsRoot/build.conf").toURI().toURL());
-		
-		config.scriptsRoot = scriptsRoot;
-		
-		config.setConfigFile(new File("$scriptsRoot/build.conf").toURI().toURL());
-		
-    	//Add the project specific conf
-    	mergeConfig(config, 'build.conf');
-    	
-    	//Add the project specific conf
-    	mergeConfig(config, 'local.build.conf');
-		
-		//Add PC specific conf
-		mergeConfig(config, "${config.ivy.dir}/local.build.conf");
+		if (config == null) {
+        	def userHome = System.properties['user.home'];
+        	
+    		def scriptsRoot = args.length > 0 ? args[0] : 'scripts';
+    		
+    		ConfigSlurper cs = new ConfigSlurper();
+    		
+    		cs.binding = [scriptsRoot:scriptsRoot] + System.properties;
+    		
+        	config = cs.parse(new File("$scriptsRoot/build.conf").toURI().toURL());
+    		
+    		config.scriptsRoot = scriptsRoot;
+    		
+    		config.setConfigFile(new File("$scriptsRoot/build.conf").toURI().toURL());
+    		
+        	//Add the project specific conf
+        	mergeConfig(config, 'build.conf');
+        	
+        	//Add the project specific conf
+        	mergeConfig(config, 'local.build.conf');
+    		
+    		//Add PC specific conf
+    		mergeConfig(config, "${config.ivy.dir}/local.build.conf");
+		}
 	}
 	
 	public static BuildMain inst(String[] args) {
@@ -87,33 +92,48 @@ class BuildMain extends Script {
 	}
 	
 	def ivy() {
-		download(config.ivy.lib.url, config.ivy.jars.dir);
-		download(config.ivy.svnresolver.url, config.ivy.jars.dir);
-		download(config.ivy.svnkit.url, config.ivy.jars.dir);
-		
-		addCP(config.ivy.jars.dir)
-
-		def buildIvy = this.class.classLoader.parseClass(new File("${config.scriptsRoot}/BuildIvy.groovy")).newInstance()
-		
-		buildIvy.run(config, this);
+		getBuildIvy().run(config, this);
 	}
+	
+    def getBuildIvy() {
+		if (buildIvy == null) {
+			init()
+			download(config.ivy.lib.url, config.ivy.jars.dir);
+			download(config.ivy.svnresolver.url, config.ivy.jars.dir);
+			download(config.ivy.svnkit.url, config.ivy.jars.dir);
+			
+			addCP(config.ivy.jars.dir)
+			
+			buildIvy = this.class.classLoader.parseClass(new File("${config.scriptsRoot}/BuildIvy.groovy")).newInstance()
+		}
+    	return buildIvy;
+    }
 	
 	def reveng() {
 		ivy();
-		
 		addCP(config.reveng.libs.dir);
-		
-		def buildRevEng = this.class.classLoader.parseClass(new File("${config.scriptsRoot}/BuildRevEng.groovy")).newInstance()
-		buildRevEng.run(config, this);
+		getBuildRevEng().run(config, this);
 	}
+	
+	def getBuildRevEng() {
+		if (buildRevEng == null) {
+			buildRevEng = this.class.classLoader.parseClass(new File("${config.scriptsRoot}/BuildRevEng.groovy")).newInstance();
+		}
+    	return buildRevEng;
+    }
 	
 	def clean() {
 		
+		getBuildIvy().clean();
+	}
+	
+	def pack() {
+		init();
+		reveng()
 	}
 	
 	def run() {
-		init();
-		reveng()
+		pack()
 		println 'complete'
 	}
 	

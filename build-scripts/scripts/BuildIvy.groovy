@@ -1,3 +1,5 @@
+import java.io.File;
+
 import groovy.lang.GroovyClassLoader;
 import groovy.util.ConfigObject;
 
@@ -61,4 +63,16 @@ class BuildIvy {
         	ivy.retrieve(md.getModuleRevisionId(), 'lib/[conf]/[artifact].[ext]', options);
         }
     }
+	
+	def clean() {
+		new File( 'lib' ).eachDirMatch ~/[^\\.].*/, {
+			dir ->
+			dir.eachFileMatch ~/.*/, {
+				f -> if (!f.delete()) {
+					println "Can't delete $f";
+				}
+			}
+			dir.delete()
+		}
+	}
 }
