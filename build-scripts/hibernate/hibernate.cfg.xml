@@ -5,7 +5,7 @@
 <hibernate-configuration>
     <session-factory>
         <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
-        <property name="hibernate.connection.password"></property>
+<!--    <property name="hibernate.connection.password"></property> set this in your local conf file-->
         <property name="hibernate.connection.url">jdbc:postgresql://84.238.192.10:5432/jWorld</property>
         <property name="hibernate.connection.username">jWorldADM</property>
         <property name="hibernate.default_schema">jwadm</property>
