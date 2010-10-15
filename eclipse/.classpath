@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="scripts"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="con" path="GROOVY_SUPPORT"/>
 	<classpathentry kind="lib" path="lib/test/commons-beanutils.jar"/>
 	<classpathentry kind="lib" path="lib/test/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/test/commons-net.jar"/>
