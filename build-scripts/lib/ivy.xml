@@ -15,7 +15,7 @@
 		<conf name="jar" description="Libraries for deployed jar" />
 		<conf name="generate-entities" description="For generating persistence entities" />
 		<conf name="compile" extends="jar" description="Compiling java classes" />
-		<conf name="test" extends="compile" description="To compile and run java tests" />
+		<conf name="test" extends="compile, generate-entities" description="To compile and run java tests" />
 	</configurations>
 
 	<publications>
