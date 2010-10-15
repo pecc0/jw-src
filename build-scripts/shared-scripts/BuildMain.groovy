@@ -62,7 +62,7 @@ class BuildMain extends Script {
 		if (config == null) {
         	def userHome = System.properties['user.home'];
         	
-    		def scriptsRoot = args.length > 0 ? args[0] : 'scripts';
+    		def scriptsRoot = args.length > 0 ? args[0] : 'shared-scripts';
     		
     		ConfigSlurper cs = new ConfigSlurper();
     		
@@ -133,7 +133,16 @@ class BuildMain extends Script {
 	}
 	
 	def run() {
-		pack()
+		def scriptsRoot = args.length > 0 ? args[0] : 'shared-scripts';
+		def operation = args.length > 1 ? args[1] : 'package'
+		switch ( operation ) {
+			case "package":
+				this.pack();
+				break;
+			case "clean":
+				this.clean();
+				break;
+		}
 		println 'complete'
 	}
 	
