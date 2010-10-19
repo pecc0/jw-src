@@ -20,7 +20,7 @@ using namespace irr;
 class JWSphere: public irr::scene::ISceneNode {
 
 	core::aabbox3d<f32> Box;
-	video::S3DVertex Vertices[4];
+	video::S3DVertex OctahedronVertices[4];
 	video::SMaterial Material;
 
 public:
