@@ -10,6 +10,7 @@
 
 #include "ISceneNode.h"
 #include <irrlicht.h>
+#include "JWTriangle.h"
 
 using namespace irr;
 
@@ -20,8 +21,9 @@ using namespace irr;
 class JWSphere: public irr::scene::ISceneNode {
 
 	core::aabbox3d<f32> Box;
-	video::S3DVertex OctahedronVertices[4];
+	video::S3DVertex OctahedronVertices[6];
 	video::SMaterial Material;
+	JWTriangle OctahedronTriangles[8];
 
 public:
 	JWSphere(scene::ISceneNode* parent, scene::ISceneManager* mgr, s32 id);

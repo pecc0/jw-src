@@ -52,13 +52,13 @@ void JWSphere::OnRegisterSceneNode() {
 }
 
 void JWSphere::render() {
-	u16 indices[] = { 2, 3, 0,  2, 1, 3,  1, 0, 3,  2, 0, 1 };
+	u32 indices[] = { 2, 3, 0,  2, 1, 3,  1, 0, 3,  2, 0, 1 };
 	video::IVideoDriver* driver = SceneManager->getVideoDriver();
 
 	driver->setMaterial(Material);
 	driver->setTransform(video::ETS_WORLD, AbsoluteTransformation);
 	driver->drawVertexPrimitiveList(&OctahedronVertices[0], 4, &indices[0], 4,
-			video::EVT_STANDARD, scene::EPT_TRIANGLES, video::EIT_16BIT);
+			video::EVT_STANDARD, scene::EPT_TRIANGLES, video::EIT_32BIT);
 
 }
 
