@@ -13,15 +13,22 @@ JWSphere::JWSphere(scene::ISceneNode* parent, scene::ISceneManager* mgr, s32 id)
 	Material.Wireframe = false;
 	Material.Lighting = false;
 
-	OctahedronVertices[0] = video::S3DVertex(0, 0, 10, 1, 0, 0, video::SColor(255, 0,
+	OctahedronVertices[0] = video::S3DVertex(0, 20, 0, 0, 1, 0, video::SColor(255, 0,
 			0, 0), 0, 0);
-	OctahedronVertices[1] = video::S3DVertex(10, 0, -10, 1, 0, 0, video::SColor(255, 0,
+	OctahedronVertices[1] = video::S3DVertex(-20, 0, 0, -1, 0, 0, video::SColor(255, 0,
 			255, 0), 0, 0);
-	OctahedronVertices[2] = video::S3DVertex(0, 20, 0, 1, 0, 0, video::SColor(255, 0,
+	OctahedronVertices[2] = video::S3DVertex(0, 0, -20, 0, 0, -1, video::SColor(255, 0,
 			255, 0), 0, 0);
-	OctahedronVertices[3] = video::S3DVertex(-10, 0, -10, 1, 0, 0, video::SColor(255,
+	OctahedronVertices[3] = video::S3DVertex(0, 0, 20, 0, 0, 1, video::SColor(255,
 			0, 255, 0), 0, 0);
 
+	//OctahedronVertices[4] = NULL;
+	//OctahedronVertices[5] = NULL;
+
+	OctahedronVertices[6] = video::S3DVertex(20, 0, 0, 1, 0, 0, video::SColor(255,
+				0, 255, 0), 0, 0);
+	OctahedronVertices[7] = video::S3DVertex(0, -20, 0, 0, -1, 0, video::SColor(255,
+					0, 255, 0), 0, 0);
 	//Vertices[3].Color = video::SColor(255,
 	//		0, 0, 255);
 

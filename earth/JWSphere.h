@@ -11,6 +11,7 @@
 #include "ISceneNode.h"
 #include <irrlicht.h>
 #include "JWTriangle.h"
+#include <ext/hash_map>
 
 using namespace irr;
 
@@ -21,7 +22,7 @@ using namespace irr;
 class JWSphere: public irr::scene::ISceneNode {
 
 	core::aabbox3d<f32> Box;
-	video::S3DVertex OctahedronVertices[6];
+	video::S3DVertex OctahedronVertices[8]; // indexes 4 and 5 are not used
 	video::SMaterial Material;
 	JWTriangle OctahedronTriangles[8];
 

@@ -13,15 +13,16 @@
 using namespace irr;
 
 class JWTriangle {
-	u32 TileIndex;
-	u16 VertexIndexes[3];
+	u32 TrIndex;
+	u32 Neighbours[3];
 public:
 	JWTriangle();
-	JWTriangle(u16 v0, u16 v1, u16 v2);
+	JWTriangle(u32 v0, u32 v1, u32 v2);
 	virtual ~JWTriangle();
     u32 getTileIndex() const;
     void setTileIndex(u32 TileIndex);
-    void setVertexIndexes(u16 v0, u16 v1, u16 v2);
+    void setNeighbours(u32 v0, u32 v1, u32 v2);
+    u32 getNeighbour(int i);
 };
 
 #endif /* JWTRIANGLE_H_ */
