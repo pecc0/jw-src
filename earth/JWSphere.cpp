@@ -7,6 +7,8 @@
 
 #include "JWSphere.h"
 
+
+
 JWSphere::JWSphere(scene::ISceneNode* parent, scene::ISceneManager* mgr, s32 id) :
 	scene::ISceneNode(parent, mgr, id) {
 
@@ -31,6 +33,15 @@ JWSphere::JWSphere(scene::ISceneNode* parent, scene::ISceneManager* mgr, s32 id)
 					0, 255, 0), 0, 0);
 	//Vertices[3].Color = video::SColor(255,
 	//		0, 0, 255);
+
+	OctahedronTriangles[0] = JWTriangle(0b000, 0b001, 0b100, 0b010);
+	OctahedronTriangles[1] = JWTriangle(0b001, 0b000, 0b011, 0b101);
+	OctahedronTriangles[2] = JWTriangle(0b010, 0b110, 0b011, 0b000);
+	OctahedronTriangles[3] = JWTriangle(0b011, 0b001, 0b010, 0b111);
+	OctahedronTriangles[4] = JWTriangle(0b100, 0b000, 0b101, 0b110);
+	OctahedronTriangles[5] = JWTriangle(0b101, 0b111, 0b100, 0b001);
+	OctahedronTriangles[6] = JWTriangle(0b110, 0b010, 0b100, 0b111);
+	OctahedronTriangles[7] = JWTriangle(0b111, 0b101, 0b011, 0b110);
 
 	/*
 	 The Irrlicht Engine needs to know the bounding box of a scene node.

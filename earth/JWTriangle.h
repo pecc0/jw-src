@@ -17,7 +17,7 @@ class JWTriangle {
 	u32 Neighbours[3];
 public:
 	JWTriangle();
-	JWTriangle(u32 v0, u32 v1, u32 v2);
+	JWTriangle(u32 indx, u32 v0, u32 v1, u32 v2);
 	virtual ~JWTriangle();
     u32 getTileIndex() const;
     void setTileIndex(u32 TileIndex);

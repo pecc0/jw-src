@@ -11,7 +11,8 @@ JWTriangle::JWTriangle() {
 	// TODO Auto-generated constructor stub
 
 }
-JWTriangle::JWTriangle(u32 v0, u32 v1, u32 v2) {
+JWTriangle::JWTriangle(u32 indx, u32 v0, u32 v1, u32 v2) {
+	setTileIndex(indx);
 	setNeighbours(v0, v1, v2);
 }
 
