@@ -13,6 +13,7 @@
 using namespace irr;
 
 class JWTriangle {
+	int Iteration;
 	u32 TrIndex;
 	u32 Neighbours[3];
 public:
@@ -23,6 +24,9 @@ public:
     void setTileIndex(u32 TileIndex);
     void setNeighbours(u32 v0, u32 v1, u32 v2);
     u32 getNeighbour(int i);
+    bool isUpside();
+    int getIteration() const;
+    void setIteration(int Iteration);
 };
 
 #endif /* JWTRIANGLE_H_ */

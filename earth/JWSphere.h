@@ -32,6 +32,8 @@ struct UnsignedEquals {
 	}
 };
 
+typedef hash_map<u32, JWTriangle, UnsignedHash, UnsignedEquals> TrianglesMap;
+
 class JWSphere: public irr::scene::ISceneNode {
 
 	core::aabbox3d<f32> Box;
@@ -39,7 +41,7 @@ class JWSphere: public irr::scene::ISceneNode {
 	video::SMaterial Material;
 	// OctahedronTriangles[8];
 
-	hash_map<u32, JWTriangle, UnsignedHash, UnsignedEquals> OctahedronTriangles;
+	TrianglesMap OctahedronTriangles;
 public:
 	JWSphere(scene::ISceneNode* parent, scene::ISceneManager* mgr, s32 id);
 	virtual ~JWSphere();
@@ -53,6 +55,8 @@ public:
 	virtual u32 getMaterialCount();
 
 	virtual video::SMaterial& getMaterial(u32 i);
+
+	u32 getTriangleVertex(u32 triangle, int i);
 };
 
 #endif /* JWSPHERE_H_ */

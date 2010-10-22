@@ -8,8 +8,7 @@
 #include "JWTriangle.h"
 
 JWTriangle::JWTriangle() {
-	// TODO Auto-generated constructor stub
-
+	Iteration = 0;
 }
 JWTriangle::JWTriangle(u32 indx, u32 v0, u32 v1, u32 v2) {
 	setTileIndex(indx);
@@ -43,5 +42,30 @@ u32 JWTriangle::getNeighbour(int i)
 {
 	return this->Neighbours[i % 3];
 }
+
+int JWTriangle::getIteration() const
+{
+    return Iteration;
+}
+
+void JWTriangle::setIteration(int Iteration)
+{
+    this->Iteration = Iteration;
+}
+
+bool JWTriangle::isUpside()
+{
+	bool result = (TrIndex & 0b100) == 0;
+	int i = Iteration;
+	while (i > 0) {
+		if ((TrIndex >> (3 + (i - 1) * 2) & 0b11) == 0b11) {
+			result = !result;
+		}
+		i++;
+	}
+	return result;
+}
+
+
 
 

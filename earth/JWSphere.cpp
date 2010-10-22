@@ -83,6 +83,7 @@ void JWSphere::render() {
 const core::aabbox3d<f32>& JWSphere::getBoundingBox() const {
 	return Box;
 }
+
 u32 JWSphere::getMaterialCount() {
 	return 1;
 }
@@ -90,3 +91,12 @@ u32 JWSphere::getMaterialCount() {
 video::SMaterial& JWSphere::getMaterial(u32 i) {
 	return Material;
 }
+
+u32 JWSphere::getTriangleVertex(u32 triangle, int i)
+{
+    JWTriangle & tr = OctahedronTriangles[triangle];
+    //if (tr)
+}
+
+
+
