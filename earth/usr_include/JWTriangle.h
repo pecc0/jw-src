@@ -14,9 +14,9 @@ using namespace irr;
 
 class JWTriangle
 {
-	int Iteration;
-	u32 TrIndex;
-	u32 Neighbours[3];
+	int m_nIteration;
+	u32 m_u32TrIndex;
+	u32 m_vNeighbours[3];
 public:
 	JWTriangle();
 	JWTriangle(u32 indx, u32 v0, u32 v1, u32 v2);

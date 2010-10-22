@@ -9,7 +9,7 @@
 
 JWTriangle::JWTriangle()
 {
-	Iteration = 0;
+	m_nIteration = 0;
 }
 JWTriangle::JWTriangle(u32 indx, u32 v0, u32 v1, u32 v2)
 {
@@ -19,19 +19,19 @@ JWTriangle::JWTriangle(u32 indx, u32 v0, u32 v1, u32 v2)
 
 u32 JWTriangle::getTrIndex() const
 {
-	return TrIndex;
+	return m_u32TrIndex;
 }
 
 void JWTriangle::setTileIndex(u32 TileIndex)
 {
-	this->TrIndex = TileIndex;
+	this->m_u32TrIndex = TileIndex;
 }
 
 void JWTriangle::setNeighbours(u32 v0, u32 v1, u32 v2)
 {
-	this->Neighbours[0] = v0;
-	this->Neighbours[1] = v1;
-	this->Neighbours[2] = v2;
+	this->m_vNeighbours[0] = v0;
+	this->m_vNeighbours[1] = v1;
+	this->m_vNeighbours[2] = v2;
 }
 
 JWTriangle::~JWTriangle()
@@ -41,26 +41,26 @@ JWTriangle::~JWTriangle()
 
 u32 JWTriangle::getNeighbour(int i)
 {
-	return this->Neighbours[i % 3];
+	return this->m_vNeighbours[i % 3];
 }
 
 int JWTriangle::getIteration() const
 {
-	return Iteration;
+	return m_nIteration;
 }
 
-void JWTriangle::setIteration(int Iteration)
+void JWTriangle::setIteration(int nIteration)
 {
-	this->Iteration = Iteration;
+	this->m_nIteration = nIteration;
 }
 
 bool JWTriangle::isUpside()
 {
-	bool result = (TrIndex & 0b100) == 0;
-	int i = Iteration;
+	bool result = (m_u32TrIndex & 0b100) == 0;
+	int i = m_nIteration;
 	while (i > 0)
 	{
-		if ((TrIndex >> (3 + (i - 1) * 2) & 0b11) == 0b11)
+		if ((m_u32TrIndex >> (3 + (i - 1) * 2) & 0b11) == 0b11)
 		{
 			result = !result;
 		}
