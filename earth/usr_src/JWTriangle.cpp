@@ -64,7 +64,7 @@ bool JWTriangle::isUpside()
 		{
 			result = !result;
 		}
-		i++;
+		--i;
 	}
 	return result;
 }
