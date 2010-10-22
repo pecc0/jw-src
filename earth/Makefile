@@ -29,7 +29,8 @@ CXXFLAGS = $(USERCXXFLAGS)
 LDFLAGS = $(USERLDFLAGS)
 
 #default target is Linux
-all: all_win32
+#all: all_win32
+all: all_linux
 
 # target specific settings
 all_linux all_win32 static_win32: LDFLAGS += -L$(IrrlichtHome)/lib/$(SYSTEM) -lIrrlicht
