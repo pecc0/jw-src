@@ -7,30 +7,29 @@
 
 #include "JWSphere.h"
 
-
-
 JWSphere::JWSphere(scene::ISceneNode* parent, scene::ISceneManager* mgr, s32 id) :
-	scene::ISceneNode(parent, mgr, id) {
+	scene::ISceneNode(parent, mgr, id)
+{
 
 	Material.Wireframe = false;
 	Material.Lighting = false;
 
-	OctahedronVertices[0] = video::S3DVertex(0, 20, 0, 0, 1, 0, video::SColor(255, 0,
-			0, 0), 0, 0);
-	OctahedronVertices[1] = video::S3DVertex(-20, 0, 0, -1, 0, 0, video::SColor(255, 0,
-			255, 0), 0, 0);
-	OctahedronVertices[2] = video::S3DVertex(0, 0, -20, 0, 0, -1, video::SColor(255, 0,
-			255, 0), 0, 0);
-	OctahedronVertices[3] = video::S3DVertex(0, 0, 20, 0, 0, 1, video::SColor(255,
-			0, 255, 0), 0, 0);
+	OctahedronVertices[0] = video::S3DVertex(0, 20, 0, 0, 1, 0, video::SColor(
+			255, 0, 0, 0), 0, 0);
+	OctahedronVertices[1] = video::S3DVertex(-20, 0, 0, -1, 0, 0,
+			video::SColor(255, 0, 255, 0), 0, 0);
+	OctahedronVertices[2] = video::S3DVertex(0, 0, -20, 0, 0, -1,
+			video::SColor(255, 0, 255, 0), 0, 0);
+	OctahedronVertices[3] = video::S3DVertex(0, 0, 20, 0, 0, 1, video::SColor(
+			255, 0, 255, 0), 0, 0);
 
 	//OctahedronVertices[4] = NULL;
 	//OctahedronVertices[5] = NULL;
 
-	OctahedronVertices[6] = video::S3DVertex(20, 0, 0, 1, 0, 0, video::SColor(255,
-				0, 255, 0), 0, 0);
-	OctahedronVertices[7] = video::S3DVertex(0, -20, 0, 0, -1, 0, video::SColor(255,
-					0, 255, 0), 0, 0);
+	OctahedronVertices[6] = video::S3DVertex(20, 0, 0, 1, 0, 0, video::SColor(
+			255, 0, 255, 0), 0, 0);
+	OctahedronVertices[7] = video::S3DVertex(0, -20, 0, 0, -1, 0,
+			video::SColor(255, 0, 255, 0), 0, 0);
 	//Vertices[3].Color = video::SColor(255,
 	//		0, 0, 255);
 
@@ -58,19 +57,23 @@ JWSphere::JWSphere(scene::ISceneNode* parent, scene::ISceneManager* mgr, s32 id)
 	}
 }
 
-JWSphere::~JWSphere() {
+JWSphere::~JWSphere()
+{
 	// TODO Auto-generated destructor stub
 }
 
-void JWSphere::OnRegisterSceneNode() {
+void JWSphere::OnRegisterSceneNode()
+{
 	if (IsVisible)
 		SceneManager->registerNodeForRendering(this);
 
 	ISceneNode::OnRegisterSceneNode();
 }
 
-void JWSphere::render() {
-	u32 indices[] = { 2, 3, 0,  2, 1, 3,  1, 0, 3,  2, 0, 1 };
+void JWSphere::render()
+{
+	u32 indices[] =
+	{ 2, 3, 0, 2, 1, 3, 1, 0, 3, 2, 0, 1 };
 	video::IVideoDriver* driver = SceneManager->getVideoDriver();
 
 	driver->setMaterial(Material);
@@ -80,46 +83,52 @@ void JWSphere::render() {
 
 }
 
-const core::aabbox3d<f32>& JWSphere::getBoundingBox() const {
+const core::aabbox3d<f32>& JWSphere::getBoundingBox() const
+{
 	return Box;
 }
 
-u32 JWSphere::getMaterialCount() {
+u32 JWSphere::getMaterialCount()
+{
 	return 1;
 }
 
-video::SMaterial& JWSphere::getMaterial(u32 i) {
+video::SMaterial& JWSphere::getMaterial(u32 i)
+{
 	return Material;
 }
 
 u32 JWSphere::getTriangleVertex(u32 triangle, int i)
 {
-    JWTriangle & tr = OctahedronTriangles[triangle];
-    int edge = i;
-    JWTriangle * best;
-    //Max 6 triangles around the vertex
-    for (int j = 0; j < 6; j++) {
-    	JWTriangle & neighb = OctahedronTriangles[tr.getNeighbour(edge)];
-    	int nghbEdge;
-    	for (nghbEdge = 0; nghbEdge < 3; nghbEdge++) {
-    		if (neighb.getNeighbour(nghbEdge) == tr.getTrIndex()) {
-    			break;
-    		}
-    	}
-    	edge = (nghbEdge + 1) % 3;
-    	tr = OctahedronTriangles[tr.getNeighbour(edge)];
-    	if (edge == 0) {
-    		best = &tr;
-    		if (tr.isUpside()) {
-    			break;
-    		}
-    	}
+	JWTriangle & tr = OctahedronTriangles[triangle];
+	int edge = i;
+	JWTriangle * best;
+	//Max 6 triangles around the vertex
+	for (int j = 0; j < 6; j++)
+	{
+		JWTriangle & neighb = OctahedronTriangles[tr.getNeighbour(edge)];
+		int nghbEdge;
+		for (nghbEdge = 0; nghbEdge < 3; nghbEdge++)
+		{
+			if (neighb.getNeighbour(nghbEdge) == tr.getTrIndex())
+			{
+				break;
+			}
+		}
+		edge = (nghbEdge + 1) % 3;
+		tr = OctahedronTriangles[tr.getNeighbour(edge)];
+		if (edge == 0)
+		{
+			best = &tr;
+			if (tr.isUpside())
+			{
+				break;
+			}
+		}
 
-    }
-    //So, in worst case, we found a triangle for which the searched vertex is at index 0,
-    //and in the best case, this triangle is upside
-    return best->getTrIndex();
+	}
+	//So, in worst case, we found a triangle for which the searched vertex is at index 0,
+	//and in the best case, this triangle is upside
+	return best->getTrIndex();
 }
-
-
 
