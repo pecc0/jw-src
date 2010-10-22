@@ -5,7 +5,8 @@
 # Name of the executable created (.exe will be added automatically if necessary)
 Target := 01.HelloWorld
 # List of source files, separated by spaces
-Sources := main.cpp JWSphere.cpp JWTriangle.cpp
+#Sources := main.cpp JWSphere.cpp JWTriangle.cpp
+Sources := main.cpp ./user_src/*.cpp 
 # Path to Irrlicht directory, should contain include/ and lib/
 IrrlichtHome := .
 # Path for the executable. Note that Irrlicht.dll should usually also be there for win32 systems
@@ -13,7 +14,7 @@ BinPath = ./bin/$(SYSTEM)
 
 # general compiler settings (might need to be set when compiling the lib, too)
 # preprocessor flags, e.g. defines and include paths
-USERCPPFLAGS = 
+USERCPPFLAGS = -I./user_include
 # compiler flags such as optimization flags
 #USERCXXFLAGS = -O3 -ffast-math
 USERCXXFLAGS = -g -Wall
