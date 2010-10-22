@@ -20,7 +20,7 @@ public:
 	JWTriangle();
 	JWTriangle(u32 indx, u32 v0, u32 v1, u32 v2);
 	virtual ~JWTriangle();
-    u32 getTileIndex() const;
+    u32 getTrIndex() const;
     void setTileIndex(u32 TileIndex);
     void setNeighbours(u32 v0, u32 v1, u32 v2);
     u32 getNeighbour(int i);

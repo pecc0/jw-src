@@ -95,7 +95,30 @@ video::SMaterial& JWSphere::getMaterial(u32 i) {
 u32 JWSphere::getTriangleVertex(u32 triangle, int i)
 {
     JWTriangle & tr = OctahedronTriangles[triangle];
-    //if (tr)
+    int edge = i;
+    JWTriangle * best;
+    //Max 6 triangles around the vertex
+    for (int j = 0; j < 6; j++) {
+    	JWTriangle & neighb = OctahedronTriangles[tr.getNeighbour(edge)];
+    	int nghbEdge;
+    	for (nghbEdge = 0; nghbEdge < 3; nghbEdge++) {
+    		if (neighb.getNeighbour(nghbEdge) == tr.getTrIndex()) {
+    			break;
+    		}
+    	}
+    	edge = (nghbEdge + 1) % 3;
+    	tr = OctahedronTriangles[tr.getNeighbour(edge)];
+    	if (edge == 0) {
+    		best = &tr;
+    		if (tr.isUpside()) {
+    			break;
+    		}
+    	}
+
+    }
+    //So, in worst case, we found a triangle for which the searched vertex is at index 0,
+    //and in the best case, this triangle is upside
+    return best->getTrIndex();
 }
 
 

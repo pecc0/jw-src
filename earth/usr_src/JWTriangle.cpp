@@ -16,7 +16,7 @@ JWTriangle::JWTriangle(u32 indx, u32 v0, u32 v1, u32 v2) {
 }
 
 
-u32 JWTriangle::getTileIndex() const
+u32 JWTriangle::getTrIndex() const
 {
     return TrIndex;
 }
