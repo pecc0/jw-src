@@ -29,9 +29,13 @@ CPPFLAGS = -I$(IrrlichtHome)/include -I/usr/X11R6/include $(USERCPPFLAGS)
 CXXFLAGS = $(USERCXXFLAGS)
 LDFLAGS = $(USERLDFLAGS)
 
-#default target is Linux
+# detect OS. Default target is Windows
+UNAME := $(shell uname)
+ifeq ($(UNAME), Linux)
+all: all_linux
+else
 all: all_win32
-#all: all_linux
+endif
 
 # target specific settings
 all_linux all_win32 static_win32: LDFLAGS += -L$(IrrlichtHome)/lib/$(SYSTEM) -lIrrlicht
@@ -46,11 +50,9 @@ static_win32: LDFLAGS += -lgdi32 -lwinspool -lcomdlg32 -lole32 -loleaut32 -luuid
 DESTPATH = $(BinPath)/$(Target)$(SUF)
 
 all_linux all_win32 static_win32:
-	$(warning Building...)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(Sources) -o $(DESTPATH) $(LDFLAGS)
 
 clean: clean_linux clean_win32
-	$(warning Cleaning...)
 
 clean_linux clean_win32:
 	@$(RM) $(DESTPATH)

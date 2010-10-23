@@ -19,7 +19,7 @@ USERCPPFLAGS = -I../../usr_include -I/usr/include -I../include
 #USERCXXFLAGS = -O3 -ffast-math
 USERCXXFLAGS = -g -Wall
 # linker flags such as additional libraries and link paths
-USERLDFLAGS = -L/usr/local/lib -L/usr/lib/ -L../lib -lCppUnitBuild
+USERLDFLAGS = -L/usr/local/lib -L/usr/lib/
 
 ####
 #no changes necessary below this line
@@ -29,9 +29,15 @@ CPPFLAGS = -I$(IrrlichtHome)/include -I/usr/X11R6/include $(USERCPPFLAGS)
 CXXFLAGS = $(USERCXXFLAGS)
 LDFLAGS = $(USERLDFLAGS)
 
-#default target is Linux
+# detect OS. Default target is Windows
+UNAME := $(shell uname)
+ifeq ($(UNAME), Linux)
+all: all_linux
+USERLDFLAGS += -lcppunit -lrt -ldl
+else
 all: all_win32
-#all: all_linux
+USERLDFLAGS += -L../lib -lCppUnitBuild
+endif
 
 # target specific settings
 all_linux all_win32 static_win32: LDFLAGS += -L$(IrrlichtHome)/lib/$(SYSTEM) -lIrrlicht
@@ -46,11 +52,9 @@ static_win32: LDFLAGS += -lgdi32 -lwinspool -lcomdlg32 -lole32 -loleaut32 -luuid
 DESTPATH = $(BinPath)/$(Target)$(SUF)
 
 all_linux all_win32 static_win32:
-	$(warning Building...)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(Sources) -o $(DESTPATH) $(LDFLAGS)
 
 clean: clean_linux clean_win32
-	$(warning Cleaning...)
 
 clean_linux clean_win32:
 	@$(RM) $(DESTPATH)
