@@ -40,13 +40,12 @@ typedef hash_map<u32, JWTriangle, UnsignedHash, UnsignedEquals> TrianglesMap;
 
 class JWSphere: public irr::scene::ISceneNode
 {
-
-	core::aabbox3d<f32> Box;
-	video::S3DVertex OctahedronVertices[8]; // indexes 4 and 5 are not used
-	video::SMaterial Material;
+	core::aabbox3d<f32> m_Box;
+	video::S3DVertex m_OctahedronVertices[8]; // indexes 4 and 5 are not used
+	video::SMaterial m_Material;
 	// OctahedronTriangles[8];
 
-	TrianglesMap OctahedronTriangles;
+	TrianglesMap m_mapOctahedronTriangles;
 public:
 	JWSphere(scene::ISceneNode* parent, scene::ISceneManager* mgr, s32 id);
 	virtual ~JWSphere();
