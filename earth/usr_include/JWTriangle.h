@@ -15,7 +15,7 @@ using namespace irr;
 /**
  * We will tessellate the earth into triangles. We start the tessellation from an octahedron.
  * Then we start to recursively divide each of the triangles into 4 little triangles.
- * The "history" of each received triangle is stored into its m_u32TrIndex. The first 8 triangles
+ * The "history" of each received triangle is stored into its TrIndex field. The first 8 triangles
  * of the octahedron has TrIndex 0b000 - 0b111. Then at each iteration, we occupy 2 more bits
  * of the u32 type. The child triangles are numbered 0b00 - 0b11. The center triangle is
  * always 0b11, the other triangles are numbered according to the vertex they share with
