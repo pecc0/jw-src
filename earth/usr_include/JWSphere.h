@@ -58,20 +58,17 @@ typedef hash_map<u32, JWTriangle, UnsignedHash, UnsignedEquals> TrianglesMap;
 class JWSphere: public irr::scene::ISceneNode
 {
 	core::aabbox3d<f32> m_Box;
-	video::S3DVertex m_OctahedronVertices[8]; // indexes 4 and 5 are not used
-	video::SMaterial m_Material;
-	// OctahedronTriangles[8];
-
-	TrianglesMap m_mapOctahedronTriangles;
+	video::S3DVertex m_OctahedronVertices[8];
+    video::SMaterial m_Material;
+    TrianglesMap m_mapOctahedronTriangles;
+    void init();
 public:
-	JWSphere(scene::ISceneNode* parent, scene::ISceneManager* mgr, s32 id);
-	virtual ~JWSphere();
-
-	virtual void OnRegisterSceneNode();
-
-	virtual void render();
-
-	virtual const core::aabbox3d<f32>& getBoundingBox() const;
+    JWSphere();
+    JWSphere(scene::ISceneNode *parent, scene::ISceneManager *mgr, s32 id);
+    virtual ~JWSphere();
+    virtual void OnRegisterSceneNode();
+    virtual void render();
+    const virtual core::aabbox3d<f32>& getBoundingBox() const;
 
 	virtual u32 getMaterialCount();
 
