@@ -1,0 +1,229 @@
+= Introduction =
+
+This is supposed to be recommended coding rules.
+
+
+= Variables =
+== Constants ==
+They must be all uppercase using underscore to separate words
+<pre>
+MAX_ITERATIONS
+PI
+</pre>
+
+== Enum names ==
+
+a)
+<pre>
+ enum Color 
+ {
+   COLOR_RED,
+   COLOR_GREEN,
+   COLOR_BLUE
+ };
+</pre>
+
+b)
+<pre>
+ enum NetworkState 
+ {
+   nsOK, nsFAIL, nsWAITING_FOR
+ }
+</pre>
+
+
+
+This way the mentioned "problem" is solved, but other uncomfortabilities present, such as you can not define a variable as: NetworkState MyState;.That solves the naming problem, because all of the enumerated vars should be prefixed with its struct name.
+
+
+== Variable names ==
+Variables with a large scope should have long names, variables with a small scope can have short names <br/>
+The variable names should be descriptive enough. The variable name may be concatenation of several words. <br/>
+The variable name should contain the variable type (Hungarian notation) <br/>
+<pre>
+ int nVaraible;
+ char`*` szVariable;
+ bool bVariable;
+ int`*` pnVariable;
+ void`*` pVariable;
+ unsigned int unVariable;
+ float fVafiable;
+ double dVariable;
+ char chVariable;
+ ::std::string sVariable;
+ ObjectPtr ptrVariable; //smart pointers
+</pre>
+
+
+=== First letter ===
+First letter after the prefix is capitalized. If no prefix is present first letter is capitalized.
+
+=== Second and next words ===
+The separate words (except the first one) should start with capital letter. All acronyms (like MSISDN, IMSI, ID, etc) should be with capital letters<br/>
+<pre>
+ int nLongVariable;
+ char`*` szMSISDN;
+</pre>
+
+== Global variables ==
+<pre>
+ g_ptrGlobalSmartPointer
+</pre>
+
+
+== Function/Method variables ==
+The function/method variables should be descriptive enough. 
+<pre>
+ int nVariable
+</pre>
+
+== Function/Method parameters ==
+The function parameter names should follow the rules for variable names.
+
+=== Parameter names ===
+The function/method parameter variables should be descriptive enough. 
+
+Parameters should follow the same rules as variable names.
+<pre>
+ bool isLargerThanTen( const unsigned int& nParam );
+</pre>
+
+
+=== Modifiable parameters ===
+The function/method could return result in one or more of the parameters. When the function/method returns the result in a parameter the parameter should be defined as
+Any parameter than is not modified by a function/method should be marked as const. Parameters not marked as const should be considered to be modifiable by method. Parameters should be passed as references.
+<pre>
+ void ExtractInitialsFromFullName( const std::string& sFullName, std::string& sPutInitialsHere);
+</pre>
+
+= Classes =
+== Class Names ==
+The class name should be descriptive enough. The class name should start with capital letter
+<pre>
+ class Class
+ class BaseClass 
+ class SomeOtherClass
+</pre>
+
+
+== Public, protected and private definitions ==
+=== Indent ===
+No indent for private, protected and public specifiers 
+<pre>
+ class Class
+ {
+ private:
+ protected:
+ public:
+ };
+</pre>
+
+
+=== Order of private, protected and public ===
+public, protected, private
+
+== Method names ==
+The method name should start with lower case. 
+<pre>
+ void methodOne();
+ void methodTwo();
+ bool isThisObjectInitialized();
+ void setMsisdn( const std::string& sNewMSISDN );
+</pre>
+
+The following prefixes can be applied:
+<pre>
+get:for retrieving values from object
+set:for setting values of an object
+is:for comparing/checking values 
+</pre>
+
+== Variables ==
+The class member variables should be descriptive enough. They should  start with m_ describing the variable as member and follow above guidelines for naming variables
+<pre>
+ int m_nVariable1;
+ char m_nVariable2;
+</pre>
+
+= if statements =
+The opening bracket on the next line of if/else
+<pre>
+ if ( something )
+ {
+ }
+ else
+ {
+ } 
+</pre>
+
+= switch statement =
+== Brackets ==
+The opening bracket on separate line
+<pre>
+ switch( something )
+ {
+ case 1:
+   {
+   }
+ }
+</pre>
+
+== case position ==
+The case on same level as switch, indent inside case
+<pre>
+ switch( something )
+ {
+ case 1:
+   {
+   }
+ }
+</pre>
+
+= Brackets =
+if( something ) – spaces after the opening and before the closing brackets.
+
+= Mathematical formulas =
+Spaces before and after the operator. Spaces after the opening and before the closing bracket
+<pre>
+ ( a + b ) / c 
+</pre>
+
+= Namespaces =
+== Namespace indent ==
+Variables and classes without indent
+<pre>
+ namespace name
+ {
+ class xxx
+ {
+ };
+ }
+</pre>
+
+== Namespace brackets ==
+Opening bracket on the next line
+<pre>
+ namespace name
+ {
+ }
+</pre>
+
+= Pointers and references =
+== Position of the `*` and & ==
+The `*` and & should be placed next to the type
+<pre>
+ void`*` Variable1;
+ int`*` Variable2;
+ char& Variable3;
+</pre>
+
+= Structures =
+The structure name should start with capital letter 
+<pre>
+ struct Struct
+ {
+ };
+</pre>
+
+= Indents =
+No spec for the indents, but I prefer 4 spaces. Not 1 tab = 4 spaces, but 4 spaces! Does not matter that much though.
