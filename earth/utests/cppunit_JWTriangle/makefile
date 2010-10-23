@@ -10,16 +10,16 @@ Sources := ./*.cpp ../../usr_src/*.cpp
 # Path to Irrlicht directory, should contain include/ and lib/
 IrrlichtHome := ../../
 # Path for the executable. Note that Irrlicht.dll should usually also be there for win32 systems
-BinPath = ./
+BinPath = ../../bin/$(SYSTEM)
 
 # general compiler settings (might need to be set when compiling the lib, too)
 # preprocessor flags, e.g. defines and include paths
-USERCPPFLAGS = -I../../usr_include -I/usr/include
+USERCPPFLAGS = -I../../usr_include -I/usr/include -I../include
 # compiler flags such as optimization flags
 #USERCXXFLAGS = -O3 -ffast-math
 USERCXXFLAGS = -g -Wall
 # linker flags such as additional libraries and link paths
-USERLDFLAGS = -L/usr/local/lib -L/usr/lib/ -lcppunit -lrt -ldl
+USERLDFLAGS = -L/usr/local/lib -L/usr/lib/ -L../lib -lCppUnitBuild
 
 ####
 #no changes necessary below this line
@@ -30,8 +30,8 @@ CXXFLAGS = $(USERCXXFLAGS)
 LDFLAGS = $(USERLDFLAGS)
 
 #default target is Linux
-#all: all_win32
-all: all_linux
+all: all_win32
+#all: all_linux
 
 # target specific settings
 all_linux all_win32 static_win32: LDFLAGS += -L$(IrrlichtHome)/lib/$(SYSTEM) -lIrrlicht
