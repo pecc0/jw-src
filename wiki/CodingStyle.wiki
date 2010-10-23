@@ -1,3 +1,5 @@
+#summary на английски е :D
+
 = Introduction =
 
 This is supposed to be recommended coding rules.
