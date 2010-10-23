@@ -7,8 +7,8 @@
 
 #include "JWSphere.h"
 
-
-JWSphere::JWSphere() : scene::ISceneNode(0, 0, 0)
+JWSphere::JWSphere() :
+	scene::ISceneNode(0, 0, 0)
 {
 	init();
 }
@@ -17,9 +17,9 @@ JWSphere::JWSphere(scene::ISceneNode* parent, scene::ISceneManager* mgr, s32 id)
 	scene::ISceneNode(parent, mgr, id)
 {
 
-	m_Material.Wireframe = false;
+	m_Material.Wireframe = true;
 	m_Material.Lighting = false;
-    init();
+	init();
 
 	/*
 	 The Irrlicht Engine needs to know the bounding box of a scene node.
@@ -36,32 +36,45 @@ JWSphere::JWSphere(scene::ISceneNode* parent, scene::ISceneManager* mgr, s32 id)
 	}
 }
 
-
 void JWSphere::init()
 {
-    m_OctahedronVertices[0] = video::S3DVertex(0, 20, 0, 0, 1, 0, video::SColor(255, 0, 0, 0), 0, 0);
-    m_OctahedronVertices[1] = video::S3DVertex(-20, 0, 0, -1, 0, 0, video::SColor(255, 0, 255, 0), 0, 0);
-    m_OctahedronVertices[2] = video::S3DVertex(0, 0, -20, 0, 0, -1, video::SColor(255, 0, 255, 0), 0, 0);
-    m_OctahedronVertices[3] = video::S3DVertex(0, 0, 20, 0, 0, 1, video::SColor(255, 0, 255, 0), 0, 0);
-    //OctahedronVertices[4] = NULL;
-    //OctahedronVertices[5] = NULL;
-    m_OctahedronVertices[6] = video::S3DVertex(20, 0, 0, 1, 0, 0, video::SColor(255, 0, 255, 0), 0, 0);
-    m_OctahedronVertices[7] = video::S3DVertex(0, -20, 0, 0, -1, 0, video::SColor(255, 0, 255, 0), 0, 0);
-    //Vertices[3].Color = video::SColor(255,
-    //		0, 0, 255);
-    m_mapOctahedronTriangles[0] = JWTriangle(0b000, 0b001, 0b100, 0b010);
-    m_mapOctahedronTriangles[1] = JWTriangle(0b001, 0b000, 0b011, 0b101);
-    m_mapOctahedronTriangles[2] = JWTriangle(0b010, 0b110, 0b011, 0b000);
-    m_mapOctahedronTriangles[3] = JWTriangle(0b011, 0b001, 0b010, 0b111);
-    m_mapOctahedronTriangles[4] = JWTriangle(0b100, 0b000, 0b101, 0b110);
-    m_mapOctahedronTriangles[5] = JWTriangle(0b101, 0b111, 0b100, 0b001);
-    m_mapOctahedronTriangles[6] = JWTriangle(0b110, 0b010, 0b100, 0b111);
-    m_mapOctahedronTriangles[7] = JWTriangle(0b111, 0b101, 0b011, 0b110);
+	m_vIndices = 0;
+	m_OctahedronVertices[0] = video::S3DVertex(0, 20, 0, 0, 1, 0,
+			video::SColor(255, 0, 0, 0), 0, 0);
+	m_OctahedronVertices[1] = video::S3DVertex(-20, 0, 0, -1, 0, 0,
+			video::SColor(255, 0, 255, 0), 0, 0);
+	m_OctahedronVertices[2] = video::S3DVertex(0, 0, -20, 0, 0, -1,
+			video::SColor(255, 0, 255, 0), 0, 0);
+	m_OctahedronVertices[3] = video::S3DVertex(0, 0, 20, 0, 0, 1,
+			video::SColor(255, 0, 255, 0), 0, 0);
+	//OctahedronVertices[4] = NULL;
+	//OctahedronVertices[5] = NULL;
+	m_OctahedronVertices[6] = video::S3DVertex(20, 0, 0, 1, 0, 0,
+			video::SColor(255, 0, 255, 0), 0, 0);
+	m_OctahedronVertices[7] = video::S3DVertex(0, -20, 0, 0, -1, 0,
+			video::SColor(255, 0, 255, 0), 0, 0);
+	//Vertices[3].Color = video::SColor(255,
+	//		0, 0, 255);
+	m_mapOctahedronTriangles[0] = JWTriangle(0b000, 0b001, 0b100, 0b010);
+	m_mapOctahedronTriangles[1] = JWTriangle(0b001, 0b000, 0b011, 0b101);
+	m_mapOctahedronTriangles[2] = JWTriangle(0b010, 0b110, 0b011, 0b000);
+	m_mapOctahedronTriangles[3] = JWTriangle(0b011, 0b001, 0b010, 0b111);
+	m_mapOctahedronTriangles[4] = JWTriangle(0b100, 0b000, 0b101, 0b110);
+	m_mapOctahedronTriangles[5] = JWTriangle(0b101, 0b111, 0b100, 0b001);
+	m_mapOctahedronTriangles[6] = JWTriangle(0b110, 0b010, 0b100, 0b111);
+	m_mapOctahedronTriangles[7] = JWTriangle(0b111, 0b101, 0b011, 0b110);
+
+	generateIndeces();
+}
+
+void JWSphere::clear()
+{
+	delete[] m_vIndices;
 }
 
 JWSphere::~JWSphere()
 {
-	// TODO Auto-generated destructor stub
+	clear();
 }
 
 void JWSphere::OnRegisterSceneNode()
@@ -74,14 +87,12 @@ void JWSphere::OnRegisterSceneNode()
 
 void JWSphere::render()
 {
-	u32 indices[] =
-	{ 2, 3, 0, 2, 1, 3, 1, 0, 3, 2, 0, 1 };
 	video::IVideoDriver* driver = SceneManager->getVideoDriver();
 
 	driver->setMaterial(m_Material);
 	driver->setTransform(video::ETS_WORLD, AbsoluteTransformation);
-	driver->drawVertexPrimitiveList(&m_OctahedronVertices[0], 4, &indices[0], 4,
-			video::EVT_STANDARD, scene::EPT_TRIANGLES, video::EIT_32BIT);
+	driver->drawVertexPrimitiveList(&m_OctahedronVertices[0], 8, m_vIndices,
+			m_mapOctahedronTriangles.size(), video::EVT_STANDARD, scene::EPT_TRIANGLES, video::EIT_32BIT);
 
 }
 
@@ -102,7 +113,7 @@ video::SMaterial& JWSphere::getMaterial(u32 i)
 
 u32 JWSphere::getTriangleVertex(u32 triangle, int i)
 {
-	JWTriangle * tr = & (m_mapOctahedronTriangles[triangle]);
+	JWTriangle * tr = &(m_mapOctahedronTriangles[triangle]);
 	int edge = i;
 	JWTriangle * best;
 	//Max 6 triangles around the vertex
@@ -116,7 +127,8 @@ u32 JWSphere::getTriangleVertex(u32 triangle, int i)
 				break;
 			}
 		}
-		JWTriangle * neighb = & (m_mapOctahedronTriangles[tr->getNeighbour(edge)]);
+		JWTriangle * neighb =
+				&(m_mapOctahedronTriangles[tr->getNeighbour(edge)]);
 		int nghbEdge;
 
 		//what is the index of current triangle in the neighbor's list
@@ -135,5 +147,22 @@ u32 JWSphere::getTriangleVertex(u32 triangle, int i)
 	//So, in worst case, we found a triangle for which the searched vertex is at index 0,
 	//and in the best case, this triangle is upside
 	return best->getTrIndex();
+}
+
+void JWSphere::generateIndeces()
+{
+	clear();
+	m_vIndices = new u32[m_mapOctahedronTriangles.size() * 3];
+
+	int i = 0;
+
+	TrianglesMap::iterator it = m_mapOctahedronTriangles.begin();
+	for (; it != m_mapOctahedronTriangles.end(); ++it)
+	{
+		//it->first
+		for (int j = 0; j < 3; j++) {
+			m_vIndices[i++] = getTriangleVertex(it->first, j);
+		}
+	}
 }
 

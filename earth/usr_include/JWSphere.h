@@ -61,7 +61,9 @@ class JWSphere: public irr::scene::ISceneNode
 	video::S3DVertex m_OctahedronVertices[8];
     video::SMaterial m_Material;
     TrianglesMap m_mapOctahedronTriangles;
+    u32 * m_vIndices;
     void init();
+    void clear();
 public:
     JWSphere();
     JWSphere(scene::ISceneNode *parent, scene::ISceneManager *mgr, s32 id);
@@ -75,6 +77,8 @@ public:
 	virtual video::SMaterial& getMaterial(u32 i);
 
 	u32 getTriangleVertex(u32 triangle, int i);
+
+	void generateIndeces();
 };
 
 #endif /* JWSPHERE_H_ */

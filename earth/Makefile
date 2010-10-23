@@ -3,7 +3,7 @@
 # and be sure that CXX is set to a valid compiler
 
 # Name of the executable created (.exe will be added automatically if necessary)
-Target := 01.HelloWorld
+Target := JWEarth
 # List of source files, separated by spaces
 #Sources := main.cpp JWSphere.cpp JWTriangle.cpp
 Sources := main.cpp ./usr_src/*.cpp 
