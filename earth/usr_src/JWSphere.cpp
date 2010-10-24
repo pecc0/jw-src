@@ -160,7 +160,7 @@ void JWSphere::generateIndeces()
 	for (; it != m_mapOctahedronTriangles.end(); ++it)
 	{
 		//it->first
-		for (int j = 0; j < 3; j++) {
+		for (int j = 2; j >= 0; --j) {
 			m_vIndices[i++] = getTriangleVertex(it->first, j);
 		}
 	}
