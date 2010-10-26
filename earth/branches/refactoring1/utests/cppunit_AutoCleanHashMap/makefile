@@ -3,9 +3,9 @@
 # and be sure that CXX is set to a valid compiler
 
 # Name of the executable created (.exe will be added automatically if necessary)
-Target := cppunit_JWTriangle
+Target := cppunit_AutoCleanHashMap
 # List of source files, separated by spaces
-#Sources := main.cpp JWSphere.cpp JWTriangle.cpp
+#Sources := main.cpp JWSphere.cpp AutoCleanHashMap.cpp
 Sources := ./*.cpp ../../usr_src/AutoCleanHashMap.cpp
 # Path to Irrlicht directory, should contain include/ and lib/
 IrrlichtHome := ../../

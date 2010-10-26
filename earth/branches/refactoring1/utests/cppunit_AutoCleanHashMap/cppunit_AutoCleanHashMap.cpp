@@ -11,10 +11,13 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
+using namespace jw;
+
 class TestAutoCleanHashMap : public CPPUNIT_NS::TestFixture
 {
 	CPPUNIT_TEST_SUITE( TestAutoCleanHashMap );
 	/*CPPUNIT_TEST( testFunctionName );*/
+	CPPUNIT_TEST( testAlloc );
 	CPPUNIT_TEST_SUITE_END();
 
 
@@ -32,6 +35,9 @@ public:
 protected:
 	/*Test functions go here*/
 	/*void testFunctionName() {...}*/
+	void testAlloc() {
+
+	}
 
 
 };

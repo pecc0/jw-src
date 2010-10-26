@@ -6,25 +6,10 @@
  */
 
 #include "AutoCleanHashMap.h"
+#include "string.h"
 
-namespace jw {
-
-template<class K, class D> AutoCleanHashMap<K, D>::AutoCleanHashMap(int size, int collisionJump) : AutoCleanHashMap(size, collisionJump, NULL)
+namespace jw
 {
-}
 
-template<class K, class D> AutoCleanHashMap<K, D>::AutoCleanHashMap(int size) : AutoCleanHashMap(size, 1)
-{
-}
-
-template<class K, class D> AutoCleanHashMap<K, D>::AutoCleanHashMap(int size, int collisionJump, bool (*ptIsForDelete)(K))
-{
-	m_nSize = size;
-
-}
-
-template<class K, class D> AutoCleanHashMap<K, D>::~AutoCleanHashMap() {
-	// TODO Auto-generated destructor stub
-}
 
 }
