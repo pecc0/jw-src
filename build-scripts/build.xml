@@ -1,3 +1,0 @@
-<project default="package" name="JW">
-	<import file="shared-scripts/build-imported.xml" />
-</project>
