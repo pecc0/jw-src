@@ -1,0 +1,33 @@
+<project name="JW-imported" basedir="..">
+	<property name="jw.jars.dir" value="${user.home}/.jw/jars" />
+	<property name="scripts.shared.dir" value="shared-scripts"></property>
+
+	<available property="alreadyDownloaded" file="${jw.jars.dir}/groovy-all.jar" />
+
+	<target name="downloads" unless="alreadyDownloaded">
+		<mkdir dir="${jw.jars.dir}" />
+		<get src="http://repo1.maven.org/maven2/org/codehaus/groovy/groovy-all/1.7.5/groovy-all-1.7.5.jar" dest="${jw.jars.dir}/groovy-all.jar" usetimestamp="true" verbose="on" />
+	</target>
+	
+	<target name="package" depends="downloads" description="Packages the project">
+		<java classname="groovy.lang.GroovyShell">
+			<classpath>
+				<fileset dir="${jw.jars.dir}" includes="*.jar"></fileset>
+			</classpath>
+			<arg value="${scripts.shared.dir}/BuildMain.groovy"/>
+			<arg value="${scripts.shared.dir}"/>
+			<arg value="package"/>
+		</java>
+	</target>
+	
+	<target name="clean" description="clean all">
+		<java classname="groovy.lang.GroovyShell">
+			<classpath>
+				<fileset dir="${jw.jars.dir}" includes="*.jar"></fileset>
+			</classpath>
+			<arg value="${scripts.shared.dir}/BuildMain.groovy"/>
+			<arg value="${scripts.shared.dir}"/>
+			<arg value="clean"/>
+		</java>
+	</target>
+</project>
