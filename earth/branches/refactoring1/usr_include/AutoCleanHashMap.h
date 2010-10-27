@@ -43,7 +43,7 @@ public:
 	 * \param collisionJump Number of positions to jump after a collision
 	 * \param ptIsForDelete Predicate to quickly decide whether an element could be deleted by the element key.
 	 */
-	AutoCleanHashMap(int capacity, int collisionJump = 1, bool(*ptIsForDelete)(
+	AutoCleanHashMap(int capacity = 1, int collisionJump = 1, bool(*ptIsForDelete)(
 			KEY) = NULL) :
 		m_nCapacity(capacity), m_nSize(0), m_nCollisionJump(collisionJump),
 				m_fnIsForDelete(ptIsForDelete), m_nFirst(-1)
@@ -90,7 +90,11 @@ public:
 		} while (true);
 	}
 
-	void put(KEY key, D & data)
+	void put(KEY key, D data) {
+		put(key, &data);
+	}
+
+	void put(KEY key, D * data)
 	{
 		if (size() > (m_nCapacity * 8) / 10) { //After 80% the map starts to be unefective
 
@@ -116,7 +120,7 @@ public:
 			use(index);
 		}
 		m_ptrKeys[index] = key;
-		m_ptrPool[index] = data;
+		m_ptrPool[index] = (*data);
 	}
 
 	/**

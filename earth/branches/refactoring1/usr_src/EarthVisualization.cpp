@@ -29,11 +29,12 @@ EarthVisualization::EarthVisualization(scene::ISceneNode* parent, scene::ISceneM
 	 and/or don't want to create the box, you could also call
 	 irr::scene::ISceneNode::setAutomaticCulling() with irr::scene::EAC_OFF.
 	 */
-	m_Box.reset(m_OctahedronVertices[0].Pos);
-	for (s32 i = 1; i < 4; ++i)
-	{
-		m_Box.addInternalPoint(m_OctahedronVertices[i].Pos);
-	}
+
+	//m_Box.reset(m_OctahedronVertices[0].Pos);
+	//for (s32 i = 1; i < 4; ++i)
+	//{
+	//	m_Box.addInternalPoint(m_OctahedronVertices[i].Pos);
+	//}
 }
 
 void EarthVisualization::init()
@@ -63,12 +64,13 @@ void EarthVisualization::OnRegisterSceneNode()
 
 void EarthVisualization::render()
 {
-	video::IVideoDriver* driver = SceneManager->getVideoDriver();
+	/*video::IVideoDriver* driver = SceneManager->getVideoDriver();
 
 	driver->setMaterial(m_Material);
 	driver->setTransform(video::ETS_WORLD, AbsoluteTransformation);
 	driver->drawVertexPrimitiveList(&m_OctahedronVertices[0], 8, m_vIndices,
 			m_mapOctahedronTriangles.size(), video::EVT_STANDARD, scene::EPT_TRIANGLES, video::EIT_32BIT);
+			*/
 
 }
 
@@ -90,6 +92,7 @@ video::SMaterial& EarthVisualization::getMaterial(u32 i)
 
 void EarthVisualization::generateIndeces()
 {
+	/*
 	clear();
 	m_vIndices = new u32[m_mapOctahedronTriangles.size() * 3];
 
@@ -103,5 +106,6 @@ void EarthVisualization::generateIndeces()
 			m_vIndices[i++] = getTriangleVertex(it->first, j);
 		}
 	}
+	*/
 }
 

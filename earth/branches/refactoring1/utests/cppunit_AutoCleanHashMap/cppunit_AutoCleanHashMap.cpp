@@ -40,13 +40,12 @@ public:
 	void testCollision()
 	{
 		AutoCleanHashMap<int> hm(10);
-		int a = -6;
-		hm.put(6, a);
-		hm.put(7, a = -7);
-		hm.put(8, a = -8);
-		hm.put(9, a = -9);
-		hm.put(10, a = -10);
-		hm.put(19, a = -19); //collision
+		hm.put(6, -6);
+		hm.put(7, -7);
+		hm.put(8, -8);
+		hm.put(9, -9);
+		hm.put(10, -10);
+		hm.put(19, -19); //collision
 		CPPUNIT_ASSERT(6 == hm.size());
 		CPPUNIT_ASSERT(-6 == *(hm.get(6)));
 		CPPUNIT_ASSERT(-9 == *(hm.get(9)));
@@ -57,13 +56,12 @@ public:
 	void testForwardIteration()
 	{
 		AutoCleanHashMap<int> hm(10);
-		int a = -6;
-		hm.put(6, a);
-		hm.put(7, a = -7);
-		hm.put(8, a = -8);
-		hm.put(9, a = -9);
-		hm.put(10, a = -10);
-		hm.put(19, a = -19); //collision
+		hm.put(6, -6);
+		hm.put(7, -7);
+		hm.put(8, -8);
+		hm.put(9, -9);
+		hm.put(10, -10);
+		hm.put(19, -19); //collision
 		CPPUNIT_ASSERT(6 == hm.size());
 		AutoCleanHashMap<int>::Iterator iter = hm.begin();
 		CPPUNIT_ASSERT(-19 == *(iter++));
@@ -80,14 +78,13 @@ public:
 	void testBackwardIteration()
 	{
 		AutoCleanHashMap<int> hm(10);
-		int a = -6;
-		hm.put(6, a);
-		hm.put(7, a = -7);
-		hm.put(8, a = -8);
-		hm.put(9, a = -9);
-		hm.put(10, a = -10);
-		hm.put(19, a = -19); //collision
-		hm.put(10, a = -11); //existing
+		hm.put(6, -6);
+		hm.put(7, -7);
+		hm.put(8, -8);
+		hm.put(9, -9);
+		hm.put(10, -10);
+		hm.put(19, -19); //collision
+		hm.put(10, -11); //existing
 		CPPUNIT_ASSERT(6 == hm.size());
 		AutoCleanHashMap<int>::Iterator iter = hm.begin();
 		CPPUNIT_ASSERT(-11 == *(iter--));
@@ -100,14 +97,13 @@ public:
 	void testFreeSpace()
 	{
 		AutoCleanHashMap<int> hm(10);
-		int a = -6;
-		hm.put(6, a);
-		hm.put(7, a = -7);
-		hm.put(8, a = -8);
-		hm.put(9, a = -9);
-		hm.put(10, a = -10);
-		hm.put(19, a = -19); //collision
-		hm.put(10, a = -11); //existing
+		hm.put(6, -6);
+		hm.put(7, -7);
+		hm.put(8, -8);
+		hm.put(9, -9);
+		hm.put(10, -10);
+		hm.put(19, -19); //collision
+		hm.put(10, -11); //existing
 		CPPUNIT_ASSERT(6 == hm.size());
 		hm.deleteLast(3);
 		CPPUNIT_ASSERT(3 == hm.size());
@@ -124,7 +120,6 @@ int main()
 {
 	//TestAutoCleanHashMap test;
 	//test.testFreeSpace();
-
 	CPPUNIT_NS::TestResult testResult;
 	CPPUNIT_NS::TestResultCollector testsCollector;
 	testResult.addListener(&testsCollector);

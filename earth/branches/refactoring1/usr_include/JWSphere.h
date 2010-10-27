@@ -9,10 +9,15 @@
 #define JWSPHERE_H_
 
 #include <irrlicht.h>
+#include "AutoCleanHashMap.h"
+#include "JWTriangle.h"
 
 using namespace irr;
 using namespace __gnu_cxx;
 
+namespace jw
+{
+/*
 struct UnsignedHash
 {
 	size_t operator()(const u32 __s) const
@@ -30,6 +35,8 @@ struct UnsignedEquals
 };
 
 typedef hash_map<u32, JWTriangle, UnsignedHash, UnsignedEquals> TrianglesMap;
+*/
+
 
 /**
  * We will tessellate the sphere into triangles. We start the tessellation from an octahedron.
@@ -49,9 +56,10 @@ typedef hash_map<u32, JWTriangle, UnsignedHash, UnsignedEquals> TrianglesMap;
  * triangles for which the vertex is at 0, one of them is upside, the other is not.
  */
 
-class JWSphere {
-	core::vector3df m_OctahedronVertices[8];
-	TrianglesMap m_mapOctahedronTriangles;
+class JWSphere
+{
+	AutoCleanHashMap<core::vector3df> m_mapVertices;
+	AutoCleanHashMap<JWTriangle> m_vmapTriangles[14]; //14 levels of zoom
 public:
 	JWSphere();
 	virtual ~JWSphere();
@@ -61,7 +69,9 @@ public:
 	 * \param triangle ID of a triangle
 	 * \i internal ID of the vertex inside the triangle (0-2)
 	 */
-	u32 getTriangleVertex(u32 triangle, int i);
-};
+	u32 getTriangleVertex(u32 triangle, int level, int i);
 
+	//void generate
+};
+}
 #endif /* JWSPHERE_H_ */
