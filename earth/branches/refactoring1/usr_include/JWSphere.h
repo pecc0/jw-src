@@ -64,6 +64,10 @@ public:
 	JWSphere();
 	virtual ~JWSphere();
 
+	core::vector3df* getVertex(u32 key);
+
+	JWTriangle* getTriangle(u32 key, int level);
+
 	/**
 	 * Returns the global ID of a vertex in triangle
 	 * \param triangle ID of a triangle
