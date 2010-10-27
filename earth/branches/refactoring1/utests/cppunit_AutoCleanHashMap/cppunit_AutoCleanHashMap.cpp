@@ -21,6 +21,7 @@ CPPUNIT_TEST_SUITE( TestAutoCleanHashMap );
 		CPPUNIT_TEST( testForwardIteration );
 		CPPUNIT_TEST( testBackwardIteration );
 		CPPUNIT_TEST( testFreeSpace );
+		CPPUNIT_TEST( testAutoFreeSpace );
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -113,13 +114,35 @@ public:
 		CPPUNIT_ASSERT(-9 == *(iter++));
 		CPPUNIT_ASSERT(-11 == *(iter++));
 	}
+
+	void testAutoFreeSpace()
+	{
+		AutoCleanHashMap<int> hm(10, 0.79, 0.3);
+		hm.put(6, -6);
+		hm.put(7, -7);
+		hm.put(8, -8);
+		hm.put(9, -9);
+		hm.put(10, -10);
+		hm.put(19, -19); //collision
+		hm.put(11, -11);
+		hm.put(12, -12);
+		CPPUNIT_ASSERT(8 == hm.size());
+		CPPUNIT_ASSERT(-7 == *(hm.get(7))); //use 7
+		hm.put(13, -13); //will cause deletion of 3 elements - 6,8,9
+		CPPUNIT_ASSERT(6 == hm.size());
+		CPPUNIT_ASSERT(NULL == hm.get(6));
+		CPPUNIT_ASSERT(NULL == hm.get(8));
+		CPPUNIT_ASSERT(NULL == hm.get(9));
+
+	}
 };
 CPPUNIT_TEST_SUITE_REGISTRATION( TestAutoCleanHashMap );
 
 int main()
 {
 	//TestAutoCleanHashMap test;
-	//test.testFreeSpace();
+	//test.testAutoFreeSpace();
+
 	CPPUNIT_NS::TestResult testResult;
 	CPPUNIT_NS::TestResultCollector testsCollector;
 	testResult.addListener(&testsCollector);

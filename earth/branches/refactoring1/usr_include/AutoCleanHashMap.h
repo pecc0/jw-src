@@ -32,6 +32,9 @@ class AutoCleanHashMap
 	D* m_ptrPool;
 	KEY* m_ptrKeys;
 
+	float m_fMaxLoad;
+	float m_fDeleteRatio;
+
 	//Double liked list of indexes stuff
 	int m_nFirst;
 	int* m_prtPrev;
@@ -39,14 +42,17 @@ class AutoCleanHashMap
 public:
 
 	/**
-	 * \param size The size of the map
+	 * \param capacity The capacity of the map
+	 * \param maxLoad Maximum load factor. If we size exceed maxLoad, deleteRatio * capacity elements will be deleted. After 80% the map starts to be unefective
+	 * \deleteRatio Percent of the capacity to be deleted when size exceed the load factor
 	 * \param collisionJump Number of positions to jump after a collision
 	 * \param ptIsForDelete Predicate to quickly decide whether an element could be deleted by the element key.
 	 */
-	AutoCleanHashMap(int capacity = 1, int collisionJump = 1, bool(*ptIsForDelete)(
-			KEY) = NULL) :
+	AutoCleanHashMap(int capacity = 1, float maxLoad = 0.8, float deleteRatio =
+			0.1, int collisionJump = 1, bool(*ptIsForDelete)(KEY) = NULL) :
 		m_nCapacity(capacity), m_nSize(0), m_nCollisionJump(collisionJump),
-				m_fnIsForDelete(ptIsForDelete), m_nFirst(-1)
+				m_fnIsForDelete(ptIsForDelete), m_fMaxLoad(maxLoad),
+				m_fDeleteRatio(deleteRatio), m_nFirst(-1)
 
 	{
 		m_ptrPool = new D[m_nCapacity];
@@ -90,14 +96,16 @@ public:
 		} while (true);
 	}
 
-	void put(KEY key, D data) {
+	void put(KEY key, D data)
+	{
 		put(key, &data);
 	}
 
 	void put(KEY key, D * data)
 	{
-		if (size() > (m_nCapacity * 8) / 10) { //After 80% the map starts to be unefective
-
+		if (size() > (m_nCapacity * m_fMaxLoad))
+		{
+			deleteLast(m_nCapacity * m_fDeleteRatio);
 		}
 		int index = hash(key);
 		if (m_nFirst == -1)
@@ -137,17 +145,21 @@ public:
 		return m_ptrPool + index;
 	}
 
-	void deleteLast(int num) {
+	void deleteLast(int num)
+	{
 		Iterator i = begin();
 		i--;
-		while (num > 0) {
+		while (num > 0)
+		{
 			int current = i.Current;
-			if (current == m_nFirst) {
+			if (current == m_nFirst)
+			{
 				//We reached the start of the list.
 				return;
 			}
 			i--;
-			if (!m_fnIsForDelete || (*m_fnIsForDelete) (m_ptrKeys[current])) {
+			if (!m_fnIsForDelete || (*m_fnIsForDelete)(m_ptrKeys[current]))
+			{
 				dlListDelete(current);
 				m_ptrKeys[current] = EMPTY_KEY;
 				//delete (m_ptrPool + current);
@@ -161,108 +173,112 @@ public:
 	/**
 	 * Removes an entry from the DL List
 	 */
-    void dlListDelete(int & index)
-    {
-        int prev = m_prtPrev[index];
-        int next = m_prtNext[index];
-        m_prtNext[prev] = next;
-        m_prtPrev[next] = prev;
-    }
+	void dlListDelete(int & index)
+	{
+		int prev = m_prtPrev[index];
+		int next = m_prtNext[index];
+		m_prtNext[prev] = next;
+		m_prtPrev[next] = prev;
+	}
 
-    /**
+	/**
 	 * Move the index to the beginning if the list
 	 */
-    void use(int index)
-    {
-        if(m_nFirst == index){
-            //element is already in the beginning;
-            return;
-        }
-        dlListDelete(index);
-        push(index);
-    }
+	void use(int index)
+	{
+		if (m_nFirst == index)
+		{
+			//element is already in the beginning;
+			return;
+		}
+		dlListDelete(index);
+		push(index);
+	}
 
-    /**
+	/**
 	 * Adds the index to the beginning if the list
 	 */
-    void push(int index)
-    {
-        int last = m_prtPrev[m_nFirst];
-        m_prtNext[index] = m_nFirst;
-        m_prtPrev[index] = last;
-        m_prtNext[last] = index;
-        m_prtPrev[m_nFirst] = index;
-        m_nFirst = index;
-    }
+	void push(int index)
+	{
+		int last = m_prtPrev[m_nFirst];
+		m_prtNext[index] = m_nFirst;
+		m_prtPrev[index] = last;
+		m_prtNext[last] = index;
+		m_prtPrev[m_nFirst] = index;
+		m_nFirst = index;
+	}
 
-    class Iterator
-    {
-    public:
-        Iterator()
-        :Current(0)
-        {
-        }
+	class Iterator
+	{
+	public:
+		Iterator() :
+			Current(0)
+		{
+		}
 
-        Iterator & operator ++()
-        {
-            Current = HashMap->m_prtNext[Current];
-            return *this;
-        }
+		Iterator & operator ++()
+		{
+			Current = HashMap->m_prtNext[Current];
+			return *this;
+		}
 
-        Iterator & operator --()
-        {
-            Current = HashMap->m_prtPrev[Current];
-            return *this;
-        }
+		Iterator & operator --()
+		{
+			Current = HashMap->m_prtPrev[Current];
+			return *this;
+		}
 
-        Iterator operator ++(int)
-        {
-            Iterator tmp = *this;
-            Current = HashMap->m_prtNext[Current];
-            return tmp;
-        }
+		Iterator operator ++(int)
+		{
+			Iterator tmp = *this;
+			Current = HashMap->m_prtNext[Current];
+			return tmp;
+		}
 
-        Iterator operator --(int)
-        {
-            Iterator tmp = *this;
-            Current = HashMap->m_prtPrev[Current];
-            return tmp;
-        }
+		Iterator operator --(int)
+		{
+			Iterator tmp = *this;
+			Current = HashMap->m_prtPrev[Current];
+			return tmp;
+		}
 
-        Iterator & operator +=(int num)
-        {
-            if(num > 0){
-                while(num-- && this->Current != -1)
-                    ++(*this);
+		Iterator & operator +=(int num)
+		{
+			if (num > 0)
+			{
+				while (num-- && this->Current != -1)
+					++(*this);
 
-            }else{
-                while(num++ && this->Current != -1)
-                    --(*this);
+			}
+			else
+			{
+				while (num++ && this->Current != -1)
+					--(*this);
 
-            }
-            return *this;
-        }
+			}
+			return *this;
+		}
 
-        Iterator operator +(int num) const
-        {
-            Iterator tmp = *this;
-            return tmp += num;
-        }
+		Iterator operator +(int num) const
+		{
+			Iterator tmp = *this;
+			return tmp += num;
+		}
 
-        Iterator & operator -=(int num)
-        {
-            return (*this) += (-num);
-        }
+		Iterator & operator -=(int num)
+		{
+			return (*this) += (-num);
+		}
 
-        Iterator operator -(int num) const
-        {
-            return (*this) + (-num);
-        }
+		Iterator operator -(int num) const
+		{
+			return (*this) + (-num);
+		}
 
 #if defined (_MSC_VER) && (_MSC_VER < 1300)
 #pragma warning(disable:4284) // infix notation problem when using iterator operator ->
 #endif
-        D & operator *()
+		D & operator *()
 		{
 			return HashMap->m_ptrPool[Current];
 		}
