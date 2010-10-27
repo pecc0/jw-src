@@ -27,13 +27,13 @@ class AutoCleanHashMap
 	int m_nCapacity;
 	int m_nSize;
 	int m_nCollisionJump;
-	bool (*m_fnIsForDelete)(KEY);
+	bool
+	(*m_fnIsForDelete)(KEY);
 	D* m_ptrPool;
 	KEY* m_ptrKeys;
 
 	//Double liked list of indexes stuff
 	int m_nFirst;
-	int m_nLast;
 	int* m_prtPrev;
 	int* m_prtNext;
 public:
@@ -44,19 +44,16 @@ public:
 	 * \param ptIsForDelete Predicate to quickly decide whether an element could be deleted by the element key.
 	 */
 	AutoCleanHashMap(int capacity, int collisionJump = 1, bool(*ptIsForDelete)(
-			KEY) = NULL)
+			KEY) = NULL) :
+		m_nCapacity(capacity), m_nSize(0), m_nCollisionJump(collisionJump),
+				m_fnIsForDelete(ptIsForDelete), m_nFirst(-1)
+
 	{
-		m_nSize = 0;
-		m_nCapacity = capacity;
-		m_nCollisionJump = collisionJump;
-		m_fnIsForDelete = ptIsForDelete;
 		m_ptrPool = new D[m_nCapacity];
 		m_ptrKeys = new KEY[m_nCapacity];
 
 		memset(m_ptrKeys, EMPTY_KEY, m_nCapacity * sizeof(KEY));
 
-		m_nFirst = -1;
-		m_nLast = -1;
 		m_prtPrev = new int[m_nCapacity];
 		memset(m_prtPrev, 0xFFFFFFFF, m_nCapacity * sizeof(int));
 		m_prtNext = new int[m_nCapacity];
@@ -68,6 +65,11 @@ public:
 		delete[] m_ptrKeys;
 		delete[] m_prtPrev;
 		delete[] m_prtNext;
+	}
+
+	int size()
+	{
+		return m_nSize;
 	}
 
 	int hash(KEY key)
@@ -88,28 +90,199 @@ public:
 		} while (true);
 	}
 
+	void put(KEY key, D & data)
+	{
+		if (size() > (m_nCapacity * 8) / 10) { //After 80% the map starts to be unefective
+
+		}
+		int index = hash(key);
+		if (m_nFirst == -1)
+		{
+			//TODO assert that m_nSize == 0
+			m_nFirst = index;
+			m_prtPrev[index] = index;
+			m_prtNext[index] = index;
+		}
+
+		if (m_ptrKeys[index] == EMPTY_KEY)
+		{
+			//Element does not exist
+			push(index);
+			m_nSize++;
+		}
+		else
+		{
+			//We will replace existing element
+			use(index);
+		}
+		m_ptrKeys[index] = key;
+		m_ptrPool[index] = data;
+	}
+
 	/**
+	 * Returns pointer to the object which corresponds to certain key. The object is moved to the beginning of the DL list and will not be deleted soon
+	 */
+	D* get(KEY key)
+	{
+		int index = hash(key);
+		if (m_ptrKeys[index] == EMPTY_KEY)
+		{
+			return NULL;
+		}
+		use(index);
+		return m_ptrPool + index;
+	}
+
+	void deleteLast(int num) {
+		Iterator i = begin();
+		i--;
+		while (num > 0) {
+			int current = i.Current;
+			if (current == m_nFirst) {
+				//We reached the start of the list.
+				return;
+			}
+			i--;
+			if (!m_fnIsForDelete || (*m_fnIsForDelete) (m_ptrKeys[current])) {
+				dlListDelete(current);
+				m_ptrKeys[current] = EMPTY_KEY;
+				//delete (m_ptrPool + current);
+				//TODO call the destructor of the object
+				--m_nSize;
+				--num;
+			}
+		}
+	}
+
+	/**
+	 * Removes an entry from the DL List
+	 */
+    void dlListDelete(int & index)
+    {
+        int prev = m_prtPrev[index];
+        int next = m_prtNext[index];
+        m_prtNext[prev] = next;
+        m_prtPrev[next] = prev;
+    }
+
+    /**
 	 * Move the index to the beginning if the list
 	 */
-	void use(int index)
-	{
-		int prev = m_prtPrev[index];
+    void use(int index)
+    {
+        if(m_nFirst == index){
+            //element is already in the beginning;
+            return;
+        }
+        dlListDelete(index);
+        push(index);
+    }
 
-		if (prev == -1)
+    /**
+	 * Adds the index to the beginning if the list
+	 */
+    void push(int index)
+    {
+        int last = m_prtPrev[m_nFirst];
+        m_prtNext[index] = m_nFirst;
+        m_prtPrev[index] = last;
+        m_prtNext[last] = index;
+        m_prtPrev[m_nFirst] = index;
+        m_nFirst = index;
+    }
+
+    class Iterator
+    {
+    public:
+        Iterator()
+        :Current(0)
+        {
+        }
+
+        Iterator & operator ++()
+        {
+            Current = HashMap->m_prtNext[Current];
+            return *this;
+        }
+
+        Iterator & operator --()
+        {
+            Current = HashMap->m_prtPrev[Current];
+            return *this;
+        }
+
+        Iterator operator ++(int)
+        {
+            Iterator tmp = *this;
+            Current = HashMap->m_prtNext[Current];
+            return tmp;
+        }
+
+        Iterator operator --(int)
+        {
+            Iterator tmp = *this;
+            Current = HashMap->m_prtPrev[Current];
+            return tmp;
+        }
+
+        Iterator & operator +=(int num)
+        {
+            if(num > 0){
+                while(num-- && this->Current != -1)
+                    ++(*this);
+
+            }else{
+                while(num++ && this->Current != -1)
+                    --(*this);
+
+            }
+            return *this;
+        }
+
+        Iterator operator +(int num) const
+        {
+            Iterator tmp = *this;
+            return tmp += num;
+        }
+
+        Iterator & operator -=(int num)
+        {
+            return (*this) += (-num);
+        }
+
+        Iterator operator -(int num) const
+        {
+            return (*this) + (-num);
+        }
+
+#if defined (_MSC_VER) && (_MSC_VER < 1300)
+#pragma warning(disable:4284) // infix notation problem when using iterator operator ->
+#endif
+        D & operator *()
 		{
-			//element is already in the beginning;
-			return;
+			return HashMap->m_ptrPool[Current];
 		}
-		int next = m_prtNext[index];
-		m_prtNext[prev] = next;
-		if (next == -1) {
-			//if the element is last
-			m_nLast = prev;
-		} else {
-			m_prtPrev[next] = prev;
+
+		D * operator ->()
+		{
+			return HashMap->m_ptrPool + Current;
 		}
-		m_prtNext[index] = m_nFirst;
-		m_nFirst = index;
+
+	private:
+		explicit Iterator(AutoCleanHashMap * hashMap, int begin) :
+			Current(begin), HashMap(hashMap)
+		{
+		}
+
+		int Current;
+		AutoCleanHashMap * HashMap;
+
+		friend class AutoCleanHashMap<D> ;
+	};
+
+	Iterator begin()
+	{
+		return Iterator(this, m_nFirst);
 	}
 };
 

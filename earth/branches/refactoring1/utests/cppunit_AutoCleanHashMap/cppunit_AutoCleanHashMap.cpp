@@ -13,13 +13,15 @@
 
 using namespace jw;
 
-class TestAutoCleanHashMap : public CPPUNIT_NS::TestFixture
+class TestAutoCleanHashMap: public CPPUNIT_NS::TestFixture
 {
-	CPPUNIT_TEST_SUITE( TestAutoCleanHashMap );
-	/*CPPUNIT_TEST( testFunctionName );*/
-	CPPUNIT_TEST( testAlloc );
+CPPUNIT_TEST_SUITE( TestAutoCleanHashMap );
+		/*CPPUNIT_TEST( testFunctionName );*/
+		CPPUNIT_TEST( testCollision );
+		CPPUNIT_TEST( testForwardIteration );
+		CPPUNIT_TEST( testBackwardIteration );
+		CPPUNIT_TEST( testFreeSpace );
 	CPPUNIT_TEST_SUITE_END();
-
 
 public:
 	void setUp()
@@ -32,32 +34,107 @@ public:
 		/*Called after each test function*/
 	}
 
-protected:
+public:
 	/*Test functions go here*/
 	/*void testFunctionName() {...}*/
-	void testAlloc() {
-
+	void testCollision()
+	{
+		AutoCleanHashMap<int> hm(10);
+		int a = -6;
+		hm.put(6, a);
+		hm.put(7, a = -7);
+		hm.put(8, a = -8);
+		hm.put(9, a = -9);
+		hm.put(10, a = -10);
+		hm.put(19, a = -19); //collision
+		CPPUNIT_ASSERT(6 == hm.size());
+		CPPUNIT_ASSERT(-6 == *(hm.get(6)));
+		CPPUNIT_ASSERT(-9 == *(hm.get(9)));
+		CPPUNIT_ASSERT(-10 == *(hm.get(10)));
+		CPPUNIT_ASSERT(-19 == *(hm.get(19)));
 	}
 
+	void testForwardIteration()
+	{
+		AutoCleanHashMap<int> hm(10);
+		int a = -6;
+		hm.put(6, a);
+		hm.put(7, a = -7);
+		hm.put(8, a = -8);
+		hm.put(9, a = -9);
+		hm.put(10, a = -10);
+		hm.put(19, a = -19); //collision
+		CPPUNIT_ASSERT(6 == hm.size());
+		AutoCleanHashMap<int>::Iterator iter = hm.begin();
+		CPPUNIT_ASSERT(-19 == *(iter++));
+		CPPUNIT_ASSERT(-10 == *(iter++));
+		CPPUNIT_ASSERT(-9 == *(iter++));
+		CPPUNIT_ASSERT(-8 == *(iter++));
+		CPPUNIT_ASSERT(-7 == *(iter++));
+		CPPUNIT_ASSERT(-6 == *(iter++));
+		CPPUNIT_ASSERT(-19 == *iter);
+		iter += 7;
+		CPPUNIT_ASSERT(-10 == *(iter));
+	}
 
+	void testBackwardIteration()
+	{
+		AutoCleanHashMap<int> hm(10);
+		int a = -6;
+		hm.put(6, a);
+		hm.put(7, a = -7);
+		hm.put(8, a = -8);
+		hm.put(9, a = -9);
+		hm.put(10, a = -10);
+		hm.put(19, a = -19); //collision
+		hm.put(10, a = -11); //existing
+		CPPUNIT_ASSERT(6 == hm.size());
+		AutoCleanHashMap<int>::Iterator iter = hm.begin();
+		CPPUNIT_ASSERT(-11 == *(iter--));
+		CPPUNIT_ASSERT(-6 == *(iter--));
+		CPPUNIT_ASSERT(-7 == *(iter));
+		iter -= 3;
+		CPPUNIT_ASSERT(-19 == *(iter));
+	}
+
+	void testFreeSpace()
+	{
+		AutoCleanHashMap<int> hm(10);
+		int a = -6;
+		hm.put(6, a);
+		hm.put(7, a = -7);
+		hm.put(8, a = -8);
+		hm.put(9, a = -9);
+		hm.put(10, a = -10);
+		hm.put(19, a = -19); //collision
+		hm.put(10, a = -11); //existing
+		CPPUNIT_ASSERT(6 == hm.size());
+		hm.deleteLast(3);
+		CPPUNIT_ASSERT(3 == hm.size());
+		AutoCleanHashMap<int>::Iterator iter = hm.begin();
+		CPPUNIT_ASSERT(-11 == *(iter++));
+		CPPUNIT_ASSERT(-19 == *(iter++));
+		CPPUNIT_ASSERT(-9 == *(iter++));
+		CPPUNIT_ASSERT(-11 == *(iter++));
+	}
 };
-
 CPPUNIT_TEST_SUITE_REGISTRATION( TestAutoCleanHashMap );
 
 int main()
 {
+	//TestAutoCleanHashMap test;
+	//test.testFreeSpace();
+
 	CPPUNIT_NS::TestResult testResult;
 	CPPUNIT_NS::TestResultCollector testsCollector;
-	testResult.addListener( &testsCollector );
+	testResult.addListener(&testsCollector);
 	CPPUNIT_NS::BriefTestProgressListener progress;
-	testResult.addListener( &progress );
-
+	testResult.addListener(&progress);
 	CPPUNIT_NS::TestRunner runner;
-	runner.addTest( CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest() );
-	runner.run( testResult );
-
-	CPPUNIT_NS::CompilerOutputter outCompiler( &testsCollector, std::cerr );
+	runner.addTest(CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest());
+	runner.run(testResult);
+	CPPUNIT_NS::CompilerOutputter outCompiler(&testsCollector, std::cerr);
 	outCompiler.write();
 
-	return ( testsCollector.wasSuccessful() ? 0 : 1 );
+	return (testsCollector.wasSuccessful() ? 0 : 1);
 }
