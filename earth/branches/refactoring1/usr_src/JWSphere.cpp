@@ -15,7 +15,7 @@ bool isVertexUndeletable(KEY key) {
 
 JWSphere::JWSphere()
 {
-	m_mapVertices = AutoCleanHashMap<core::vector3df> (1046527, 8 << 14, &isVertexUndeletable);
+	m_mapVertices = AutoCleanHashMap<core::vector3df> (1046527, 0.8, 0.2, 8 << 14, &isVertexUndeletable);
 	m_mapVertices.put(0, core::vector3df(0, 20, 0));
 	m_mapVertices.put(1, core::vector3df(-20, 0, 0));
 	m_mapVertices.put(2, core::vector3df(0, 0, -20));
@@ -27,14 +27,14 @@ JWSphere::JWSphere()
 	//Vertices[3].Color = video::SColor(255,
 	//		0, 0, 255);
 
-	m_vmapTriangles[0] = AutoCleanHashMap<JWTriangle> (8);
-	m_vmapTriangles[1] = AutoCleanHashMap<JWTriangle> (8 << 2);
-	m_vmapTriangles[2] = AutoCleanHashMap<JWTriangle> (8 << 4);
-	m_vmapTriangles[3] = AutoCleanHashMap<JWTriangle> (8 << 6);
-	m_vmapTriangles[4] = AutoCleanHashMap<JWTriangle> (8 << 8);
-	m_vmapTriangles[5] = AutoCleanHashMap<JWTriangle> (8 << 10);
-	m_vmapTriangles[6] = AutoCleanHashMap<JWTriangle> (8 << 12);
-	m_vmapTriangles[7] = AutoCleanHashMap<JWTriangle> (8 << 14);
+	m_vmapTriangles[0] = AutoCleanHashMap<JWTriangle> (8, 2.0); //2.0 assure that auto clearing is disabled
+	m_vmapTriangles[1] = AutoCleanHashMap<JWTriangle> (8 << 2, 2.0);
+	m_vmapTriangles[2] = AutoCleanHashMap<JWTriangle> (8 << 4, 2.0);
+	m_vmapTriangles[3] = AutoCleanHashMap<JWTriangle> (8 << 6, 2.0);
+	m_vmapTriangles[4] = AutoCleanHashMap<JWTriangle> (8 << 8, 2.0);
+	m_vmapTriangles[5] = AutoCleanHashMap<JWTriangle> (8 << 10, 2.0);
+	m_vmapTriangles[6] = AutoCleanHashMap<JWTriangle> (8 << 12, 2.0);
+	m_vmapTriangles[7] = AutoCleanHashMap<JWTriangle> (8 << 14, 2.0);
 
 	AutoCleanHashMap<JWTriangle> & octahedronTriangles = m_vmapTriangles[0];
 

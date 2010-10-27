@@ -47,11 +47,11 @@ public:
 		hm.put(9, -9);
 		hm.put(10, -10);
 		hm.put(19, -19); //collision
-		CPPUNIT_ASSERT(6 == hm.size());
-		CPPUNIT_ASSERT(-6 == *(hm.get(6)));
-		CPPUNIT_ASSERT(-9 == *(hm.get(9)));
-		CPPUNIT_ASSERT(-10 == *(hm.get(10)));
-		CPPUNIT_ASSERT(-19 == *(hm.get(19)));
+		CPPUNIT_ASSERT_EQUAL(6, hm.size());
+		CPPUNIT_ASSERT_EQUAL(-6, *(hm.get(6)));
+		CPPUNIT_ASSERT_EQUAL(-9, *(hm.get(9)));
+		CPPUNIT_ASSERT_EQUAL(-10, *(hm.get(10)));
+		CPPUNIT_ASSERT_EQUAL(-19, *(hm.get(19)));
 	}
 
 	void testForwardIteration()
@@ -63,17 +63,17 @@ public:
 		hm.put(9, -9);
 		hm.put(10, -10);
 		hm.put(19, -19); //collision
-		CPPUNIT_ASSERT(6 == hm.size());
+		CPPUNIT_ASSERT_EQUAL(6, hm.size());
 		AutoCleanHashMap<int>::Iterator iter = hm.begin();
-		CPPUNIT_ASSERT(-19 == *(iter++));
-		CPPUNIT_ASSERT(-10 == *(iter++));
-		CPPUNIT_ASSERT(-9 == *(iter++));
-		CPPUNIT_ASSERT(-8 == *(iter++));
-		CPPUNIT_ASSERT(-7 == *(iter++));
-		CPPUNIT_ASSERT(-6 == *(iter++));
-		CPPUNIT_ASSERT(-19 == *iter);
+		CPPUNIT_ASSERT_EQUAL(-19, *(iter++));
+		CPPUNIT_ASSERT_EQUAL(-10, *(iter++));
+		CPPUNIT_ASSERT_EQUAL(-9, *(iter++));
+		CPPUNIT_ASSERT_EQUAL(-8, *(iter++));
+		CPPUNIT_ASSERT_EQUAL(-7, *(iter++));
+		CPPUNIT_ASSERT_EQUAL(-6, *(iter++));
+		CPPUNIT_ASSERT_EQUAL(-19, *iter);
 		iter += 7;
-		CPPUNIT_ASSERT(-10 == *(iter));
+		CPPUNIT_ASSERT_EQUAL(-10, *(iter));
 	}
 
 	void testBackwardIteration()
@@ -86,13 +86,13 @@ public:
 		hm.put(10, -10);
 		hm.put(19, -19); //collision
 		hm.put(10, -11); //existing
-		CPPUNIT_ASSERT(6 == hm.size());
+		CPPUNIT_ASSERT_EQUAL(6, hm.size());
 		AutoCleanHashMap<int>::Iterator iter = hm.begin();
-		CPPUNIT_ASSERT(-11 == *(iter--));
-		CPPUNIT_ASSERT(-6 == *(iter--));
-		CPPUNIT_ASSERT(-7 == *(iter));
+		CPPUNIT_ASSERT_EQUAL(-11, *(iter--));
+		CPPUNIT_ASSERT_EQUAL(-6, *(iter--));
+		CPPUNIT_ASSERT_EQUAL(-7, *(iter));
 		iter -= 3;
-		CPPUNIT_ASSERT(-19 == *(iter));
+		CPPUNIT_ASSERT_EQUAL(-19, *(iter));
 	}
 
 	void testFreeSpace()
@@ -105,14 +105,14 @@ public:
 		hm.put(10, -10);
 		hm.put(19, -19); //collision
 		hm.put(10, -11); //existing
-		CPPUNIT_ASSERT(6 == hm.size());
+		CPPUNIT_ASSERT_EQUAL(6, hm.size());
 		hm.deleteLast(3);
-		CPPUNIT_ASSERT(3 == hm.size());
+		CPPUNIT_ASSERT_EQUAL(3, hm.size());
 		AutoCleanHashMap<int>::Iterator iter = hm.begin();
-		CPPUNIT_ASSERT(-11 == *(iter++));
-		CPPUNIT_ASSERT(-19 == *(iter++));
-		CPPUNIT_ASSERT(-9 == *(iter++));
-		CPPUNIT_ASSERT(-11 == *(iter++));
+		CPPUNIT_ASSERT_EQUAL(-11, *(iter++));
+		CPPUNIT_ASSERT_EQUAL(-19, *(iter++));
+		CPPUNIT_ASSERT_EQUAL(-9, *(iter++));
+		CPPUNIT_ASSERT_EQUAL(-11, *(iter++));
 	}
 
 	void testAutoFreeSpace()
@@ -126,13 +126,13 @@ public:
 		hm.put(19, -19); //collision
 		hm.put(11, -11);
 		hm.put(12, -12);
-		CPPUNIT_ASSERT(8 == hm.size());
-		CPPUNIT_ASSERT(-7 == *(hm.get(7))); //use 7
+		CPPUNIT_ASSERT_EQUAL(8, hm.size());
+		CPPUNIT_ASSERT_EQUAL(-7, *(hm.get(7))); //use 7
 		hm.put(13, -13); //will cause deletion of 3 elements - 6,8,9
-		CPPUNIT_ASSERT(6 == hm.size());
-		CPPUNIT_ASSERT(NULL == hm.get(6));
-		CPPUNIT_ASSERT(NULL == hm.get(8));
-		CPPUNIT_ASSERT(NULL == hm.get(9));
+		CPPUNIT_ASSERT_EQUAL(6, hm.size());
+		CPPUNIT_ASSERT_EQUAL((int*)NULL, hm.get(6));
+		CPPUNIT_ASSERT_EQUAL((int*)NULL, hm.get(8));
+		CPPUNIT_ASSERT_EQUAL((int*)NULL, hm.get(9));
 
 	}
 };
