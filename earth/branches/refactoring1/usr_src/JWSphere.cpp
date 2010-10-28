@@ -6,6 +6,8 @@
  */
 
 #include "JWSphere.h"
+#include "LoggerFactory.h"
+
 namespace jw
 {
 
@@ -14,10 +16,14 @@ bool isVertexUndeletable(KEY key)
 	return key <= (8 << 14);
 }
 
-JWSphere::JWSphere()
+JWSphere::JWSphere() :
+	log(LoggerFactory::getLogger("com.jw.JWSphere"))
 {
+	log->info("Initialize JWSphere");
 	m_mapVertices = AutoCleanHashMap<core::vector3df> (1046527, 0.8, 0.2, 8
 			<< 14, &isVertexUndeletable);
+	m_mapVertices.init();
+
 	m_mapVertices.put(0, core::vector3df(0, 20, 0));
 	m_mapVertices.put(1, core::vector3df(-20, 0, 0));
 	m_mapVertices.put(2, core::vector3df(0, 0, -20));
@@ -38,6 +44,10 @@ JWSphere::JWSphere()
 	m_vmapTriangles[5] = AutoCleanHashMap<JWTriangle> (8 << 10, 2.0);
 	m_vmapTriangles[6] = AutoCleanHashMap<JWTriangle> (8 << 12, 2.0);
 	m_vmapTriangles[7] = AutoCleanHashMap<JWTriangle> (8 << 14, 2.0);
+	for (int i = 0; i < 8; i++)
+	{
+		m_vmapTriangles[i].init();
+	}
 	//End of Triangles which will not be deleted
 
 	AutoCleanHashMap<JWTriangle> & octahedronTriangles = m_vmapTriangles[0];
@@ -51,6 +61,7 @@ JWSphere::JWSphere()
 	octahedronTriangles.put(6, JWTriangle(0b110, 0b010, 0b100, 0b111));
 	octahedronTriangles.put(7, JWTriangle(0b111, 0b101, 0b011, 0b110));
 
+	log->info("Initialize JWSphere ended");
 }
 
 JWSphere::~JWSphere()

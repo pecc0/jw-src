@@ -11,12 +11,14 @@
 #include <irrlicht.h>
 #include "AutoCleanHashMap.h"
 #include "JWTriangle.h"
+#include "IJWLogger.h"
 
 using namespace irr;
 using namespace __gnu_cxx;
 
 namespace jw
 {
+using namespace log;
 /*
 struct UnsignedHash
 {
@@ -60,6 +62,7 @@ class JWSphere
 {
 	AutoCleanHashMap<core::vector3df> m_mapVertices;
 	AutoCleanHashMap<JWTriangle> m_vmapTriangles[14]; //14 levels of zoom
+	IJWLogger * log;
 public:
 	JWSphere();
 	virtual ~JWSphere();

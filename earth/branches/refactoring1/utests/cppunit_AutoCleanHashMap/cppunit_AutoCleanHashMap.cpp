@@ -41,6 +41,7 @@ public:
 	void testCollision()
 	{
 		AutoCleanHashMap<int> hm(10);
+		hm.init();
 		hm.put(6, -6);
 		hm.put(7, -7);
 		hm.put(8, -8);
@@ -57,6 +58,7 @@ public:
 	void testForwardIteration()
 	{
 		AutoCleanHashMap<int> hm(10);
+		hm.init();
 		hm.put(6, -6);
 		hm.put(7, -7);
 		hm.put(8, -8);
@@ -79,6 +81,7 @@ public:
 	void testBackwardIteration()
 	{
 		AutoCleanHashMap<int> hm(10);
+		hm.init();
 		hm.put(6, -6);
 		hm.put(7, -7);
 		hm.put(8, -8);
@@ -98,6 +101,7 @@ public:
 	void testFreeSpace()
 	{
 		AutoCleanHashMap<int> hm(10);
+		hm.init();
 		hm.put(6, -6);
 		hm.put(7, -7);
 		hm.put(8, -8);
@@ -118,6 +122,7 @@ public:
 	void testAutoFreeSpace()
 	{
 		AutoCleanHashMap<int> hm(10, 0.79, 0.3);
+		hm.init();
 		hm.put(6, -6);
 		hm.put(7, -7);
 		hm.put(8, -8);

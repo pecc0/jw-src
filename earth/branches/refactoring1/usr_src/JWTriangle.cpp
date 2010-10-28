@@ -7,11 +7,12 @@
 
 #include "JWTriangle.h"
 
-JWTriangle::JWTriangle()
+JWTriangle::JWTriangle() :
+	m_nIteration(0)
 {
-	m_nIteration = 0;
 }
-JWTriangle::JWTriangle(u32 indx, u32 v0, u32 v1, u32 v2)
+JWTriangle::JWTriangle(u32 indx, u32 v0, u32 v1, u32 v2) :
+	m_nIteration(0)
 {
 	setTileIndex(indx);
 	setNeighbours(v0, v1, v2);

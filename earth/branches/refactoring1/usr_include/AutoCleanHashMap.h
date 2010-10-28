@@ -10,9 +10,11 @@
 
 #include <stddef.h>
 #include "string.h"
+#include "LoggerFactory.h"
 
 namespace jw
 {
+using namespace jw::log;
 //prime number
 //#define UNDE 131072
 //#define SIZE 1046527
@@ -39,6 +41,8 @@ class AutoCleanHashMap
 	int m_nFirst;
 	int* m_prtPrev;
 	int* m_prtNext;
+
+	IJWLogger * log;
 public:
 
 	/**
@@ -50,11 +54,34 @@ public:
 	 */
 	AutoCleanHashMap(int capacity = 1, float maxLoad = 0.8, float deleteRatio =
 			0.1, int collisionJump = 1, bool(*ptIsForDelete)(KEY) = NULL) :
-		m_nCapacity(capacity), m_nSize(0), m_nCollisionJump(collisionJump),
-				m_fnIsForDelete(ptIsForDelete), m_fMaxLoad(maxLoad),
-				m_fDeleteRatio(deleteRatio), m_nFirst(-1)
-
+		m_nCapacity(capacity), //
+				m_nSize(0), //
+				m_nCollisionJump(collisionJump), //
+				m_fnIsForDelete(ptIsForDelete), //
+				m_ptrPool(NULL), //
+				m_ptrKeys(NULL), //
+				m_fMaxLoad(maxLoad), //
+				m_fDeleteRatio(deleteRatio), //
+				m_nFirst(-1), //
+				m_prtPrev(NULL), //
+				m_prtNext(NULL), //
+				log(LoggerFactory::getLogger("com.jw.AutoCleanHashMap"))
 	{
+
+	}
+
+	virtual ~AutoCleanHashMap()
+	{
+		delete[] m_ptrPool;
+		delete[] m_ptrKeys;
+		delete[] m_prtPrev;
+		delete[] m_prtNext;
+	}
+
+	void init()
+	{
+		log->info("start initialize capacity=%d", m_nCapacity);
+
 		m_ptrPool = new D[m_nCapacity];
 		m_ptrKeys = new KEY[m_nCapacity];
 
@@ -64,13 +91,8 @@ public:
 		memset(m_prtPrev, 0xFFFFFFFF, m_nCapacity * sizeof(int));
 		m_prtNext = new int[m_nCapacity];
 		memset(m_prtNext, 0xFFFFFFFF, m_nCapacity * sizeof(int));
-	}
-	virtual ~AutoCleanHashMap()
-	{
-		delete[] m_ptrPool;
-		delete[] m_ptrKeys;
-		delete[] m_prtPrev;
-		delete[] m_prtNext;
+
+		log->info("end initialize");
 	}
 
 	int size()
@@ -80,12 +102,14 @@ public:
 
 	int hash(KEY key)
 	{
+		int iterations = 0;
 		int result = key % m_nCapacity;
 		do
 		{
 			KEY keyInMap = m_ptrKeys[result];
 			if (keyInMap == EMPTY_KEY || keyInMap == key)
 			{
+				log->debug("hashing met %d collisions", iterations);
 				return result;
 			}
 			else
@@ -93,6 +117,7 @@ public:
 				result += m_nCollisionJump;
 				result %= m_nCapacity;
 			}
+			++iterations;
 		} while (true);
 	}
 
