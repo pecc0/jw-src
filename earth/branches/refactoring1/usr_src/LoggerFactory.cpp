@@ -11,12 +11,16 @@ namespace jw
 {
 namespace log
 {
+LoggersMap jw::log::LoggerFactory::s_mapLoggers;
 
-ConsoleLogger jw::log::LoggerFactory::logger("xxx");
-
-IJWLogger * jw::log::LoggerFactory::getLogger(const char * name)
+IJWLogger * jw::log::LoggerFactory::getLogger(const string& name)
 {
-	return &logger;
+	LoggersIterator i = s_mapLoggers.find(name);
+	if (i == s_mapLoggers.end()) {
+		s_mapLoggers[name] = ConsoleLogger(name);
+		i = s_mapLoggers.find(name);
+	}
+	return &(i->second);
 }
 
 }

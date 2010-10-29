@@ -6,6 +6,8 @@
  */
 #include <stdarg.h>
 #include <stdio.h>
+#include <string.h>
+
 #include "ConsoleLogger.h"
 
 #define PRINT_TO_G_BUFFER va_list args; \
@@ -19,10 +21,15 @@ namespace jw
 namespace log
 {
 
-ConsoleLogger::ConsoleLogger(const char * name)
+ConsoleLogger::ConsoleLogger() :
+	m_strName("")
 {
-	// TODO Auto-generated constructor stub
 
+}
+
+ConsoleLogger::ConsoleLogger(const string& name) :
+	m_strName(name)
+{
 }
 
 ConsoleLogger::~ConsoleLogger()
@@ -32,9 +39,9 @@ ConsoleLogger::~ConsoleLogger()
 
 char g_buffer[512] =
 { 0 };
-void jw::log::ConsoleLogger::print(const char *str)
+void jw::log::ConsoleLogger::print(const string& str)
 {
-	printf("%s\n", str);
+	printf("[%s]: %s\n", m_strName.c_str(), str.c_str());
 	fflush(stdout);
 }
 

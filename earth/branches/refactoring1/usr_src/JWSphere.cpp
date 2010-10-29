@@ -81,7 +81,7 @@ u32 JWSphere::getTriangleVertex(u32 triangle, int level, int i)
 		if (edge == 0)
 		{
 			best = tr;
-			if (tr->isUpside())
+			if (tr->isUpside(level))
 			{
 				break;
 			}

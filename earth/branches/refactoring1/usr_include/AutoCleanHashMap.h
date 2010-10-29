@@ -109,7 +109,7 @@ public:
 			KEY keyInMap = m_ptrKeys[result];
 			if (keyInMap == EMPTY_KEY || keyInMap == key)
 			{
-				log->debug("hashing met %d collisions", iterations);
+				//log->debug("hashing met %d collisions", iterations);
 				return result;
 			}
 			else

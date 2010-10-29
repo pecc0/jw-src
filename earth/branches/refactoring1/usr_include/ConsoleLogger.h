@@ -8,7 +8,11 @@
 #ifndef CONSOLELOGGER_H_
 #define CONSOLELOGGER_H_
 
+#include <string>
 #include "IJWLogger.h"
+
+using namespace std;
+
 namespace jw
 {
 namespace log
@@ -18,9 +22,11 @@ namespace log
 class ConsoleLogger: public IJWLogger
 {
 private:
-	void print(const char * str);
+	string m_strName;
+	void print(const std::string& str);
 public:
-	ConsoleLogger(const char * name);
+	ConsoleLogger();
+	ConsoleLogger(const string& name);
 	virtual ~ConsoleLogger();
 
 	virtual void trace(const char* pattern, ...);

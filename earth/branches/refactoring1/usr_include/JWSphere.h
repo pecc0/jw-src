@@ -19,26 +19,6 @@ using namespace __gnu_cxx;
 namespace jw
 {
 using namespace log;
-/*
-struct UnsignedHash
-{
-	size_t operator()(const u32 __s) const
-	{
-		return __s;
-	}
-};
-
-struct UnsignedEquals
-{
-	size_t operator()(const u32& __x, const u32& __y) const
-	{
-		return __x == __y;
-	}
-};
-
-typedef hash_map<u32, JWTriangle, UnsignedHash, UnsignedEquals> TrianglesMap;
-*/
-
 
 /**
  * We will tessellate the sphere into triangles. We start the tessellation from an octahedron.
@@ -74,7 +54,8 @@ public:
 	/**
 	 * Returns the global ID of a vertex in triangle
 	 * \param triangle ID of a triangle
-	 * \i internal ID of the vertex inside the triangle (0-2)
+	 * \param level
+	 * \param i internal ID of the vertex inside the triangle (0-2)
 	 */
 	u32 getTriangleVertex(u32 triangle, int level, int i);
 

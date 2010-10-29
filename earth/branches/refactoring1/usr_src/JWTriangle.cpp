@@ -7,12 +7,10 @@
 
 #include "JWTriangle.h"
 
-JWTriangle::JWTriangle() :
-	m_nIteration(0)
+JWTriangle::JWTriangle()
 {
 }
-JWTriangle::JWTriangle(u32 indx, u32 v0, u32 v1, u32 v2) :
-	m_nIteration(0)
+JWTriangle::JWTriangle(u32 indx, u32 v0, u32 v1, u32 v2)
 {
 	setTileIndex(indx);
 	setNeighbours(v0, v1, v2);
@@ -45,20 +43,10 @@ u32 JWTriangle::getNeighbour(int i)
 	return this->m_vNeighbours[i % 3];
 }
 
-int JWTriangle::getIteration() const
-{
-	return m_nIteration;
-}
-
-void JWTriangle::setIteration(int nIteration)
-{
-	this->m_nIteration = nIteration;
-}
-
-bool JWTriangle::isUpside()
+bool JWTriangle::isUpside(int level)
 {
 	bool result = (m_u32TrIndex & 0b100) == 0;
-	int i = m_nIteration;
+	int i = level;
 	while (i > 0)
 	{
 		if ((m_u32TrIndex >> (3 + (i - 1) * 2) & 0b11) == 0b11)

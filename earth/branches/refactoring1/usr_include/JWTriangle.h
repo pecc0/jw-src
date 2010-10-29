@@ -19,18 +19,18 @@ using namespace irr;
  * of the octahedron has TrIndex 0b000 - 0b111. Then at each iteration, we occupy 2 more bits
  * of the u32 type. The child triangles are numbered 0b00 - 0b11. The center triangle is
  * always 0b11, the other triangles are numbered according to the vertex they share with
- * the parent. In m_nIteration we store the iteration at which we have received the
- * triangles. The triangles of the octahedron have m_nIteration=0. A triangle is considered
- * "upside" if 1 of his edges is above the 2 others. 4 of the octahedron triangles are "upside".
+ * the parent. The level of the triangle is the iteration at which we have received the
+ * triangle. The triangles of the octahedron have level=0. We don't store this value because
+ * it is too common and we could take it from outside. A triangle is considered
+ * "upside" if 1 of its edges is above the 2 others. 4 of the octahedron triangles are "upside".
  * When we divide a triangle, only the central one changes its direction.
- * So we can easily determine whether a triangle is upside by having its TrIndex.
+ * So we can easily determine whether a triangle is upside by having its TrIndex and its level.
  * In m_vNeighbours we store the indexes of the neighbour triangles.
  *
  * @see JWTriangle::isUpside
  */
 class JWTriangle
 {
-	int m_nIteration;
 	u32 m_u32TrIndex;
 	/**
 	 * indexes of the neighbour triangles
@@ -51,9 +51,7 @@ public:
 	/**
 	 * Returnes whether a triangle is "upside". A triangle is considered "upside" if 1 of his edges is above the 2 others.
 	 */
-	bool isUpside();
-	int getIteration() const;
-	void setIteration(int Iteration);
+	bool isUpside(int level);
 };
 
 #endif /* JWTRIANGLE_H_ */

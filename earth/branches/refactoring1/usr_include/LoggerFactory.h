@@ -8,18 +8,24 @@
 #ifndef LOGGERFACTORY_H_
 #define LOGGERFACTORY_H_
 
+#include <map>
+
 #include "ConsoleLogger.h"
 
 namespace jw
 {
 namespace log
 {
+
+typedef std::map<string, ConsoleLogger> LoggersMap;
+typedef std::map<string, ConsoleLogger>::iterator LoggersIterator;
+
 class LoggerFactory
 {
-	static ConsoleLogger logger;
+	static LoggersMap s_mapLoggers;
 public:
 
-	static IJWLogger* getLogger(const char * name);
+	static IJWLogger* getLogger(const string& name);
 };
 }
 }
