@@ -10,10 +10,10 @@
 JWTriangle::JWTriangle()
 {
 }
-JWTriangle::JWTriangle(u32 indx, u32 v0, u32 v1, u32 v2)
+JWTriangle::JWTriangle(u32 indx, u32 ngh0, u32 ngh1, u32 ngh2)
 {
 	setTileIndex(indx);
-	setNeighbours(v0, v1, v2);
+	setNeighbours(ngh0, ngh1, ngh2);
 }
 
 u32 JWTriangle::getTrIndex() const
@@ -40,7 +40,12 @@ JWTriangle::~JWTriangle()
 
 u32 JWTriangle::getNeighbour(int i)
 {
-	return this->m_vNeighbours[i % 3];
+	return this->m_vNeighbours[i % 3] & 0xEFFFFFFF;
+}
+
+bool JWTriangle::isNeighbourGenerated(int i)
+{
+	return !(this->m_vNeighbours[i % 3] & 0xA0000000);
 }
 
 bool JWTriangle::isUpside(int level)
@@ -57,4 +62,6 @@ bool JWTriangle::isUpside(int level)
 	}
 	return result;
 }
+
+
 

@@ -14,10 +14,12 @@
 #include "IJWLogger.h"
 
 using namespace irr;
-using namespace __gnu_cxx;
+
+#define MAX_TRIANGLE_LEVELS 14
 
 namespace jw
 {
+
 using namespace log;
 
 /**
@@ -41,8 +43,21 @@ using namespace log;
 class JWSphere
 {
 	AutoCleanHashMap<core::vector3df> m_mapVertices;
-	AutoCleanHashMap<JWTriangle> m_vmapTriangles[14]; //14 levels of zoom
+	AutoCleanHashMap<JWTriangle> m_vmapTriangles[MAX_TRIANGLE_LEVELS]; //14 levels of zoom
 	IJWLogger * log;
+
+	/**
+	 * Returns a neighbour of a certain triangle. If the neighbour is not yet generated,
+	 * will divide its parent. We always have the parent, or the neighbour itself in
+	 * JWTriangle::m_vNeighbours.
+	 * \param triangle Triangle whose neighbour we search.
+	 * It must be pointer to triangle in m_vmapTriangles
+	 * \param level Level where actions take place.
+	 * \edge Internal (in our triangle edges) index of the edge which is shared
+	 * between our thrianlge and the neighbour
+	 */
+	JWTriangle* getTrNeighbour(JWTriangle* triangle, int level, int edge);
+
 public:
 	JWSphere();
 	virtual ~JWSphere();
@@ -59,7 +74,8 @@ public:
 	 */
 	u32 getTriangleVertex(u32 triangle, int level, int i);
 
-	//void generate
+	void divideTriangle(u32 triangle, int level);
+
 };
 }
 #endif /* JWSPHERE_H_ */

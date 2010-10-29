@@ -5,18 +5,17 @@
  *      Author: Petko
  */
 
-#include "JWSphere.h"
 #include "LoggerFactory.h"
+#include "JWSphere.h"
 
-namespace jw
-{
+using namespace jw;
 
 bool isVertexUndeletable(KEY key)
 {
 	return key <= (8 << 14);
 }
 
-JWSphere::JWSphere() :
+jw::JWSphere::JWSphere() :
 	log(LoggerFactory::getLogger("com.jw.JWSphere"))
 {
 	log->info("Initialize JWSphere");
@@ -64,12 +63,34 @@ JWSphere::JWSphere() :
 	log->info("Initialize JWSphere ended");
 }
 
-JWSphere::~JWSphere()
+jw::JWSphere::~JWSphere()
 {
 	// TODO Auto-generated destructor stub
 }
 
-u32 JWSphere::getTriangleVertex(u32 triangle, int level, int i)
+
+core::vector3df* jw::JWSphere::getVertex(u32 key)
+{
+	return NULL;
+}
+
+JWTriangle* jw::JWSphere::getTriangle(u32 key, int level)
+{
+	AutoCleanHashMap<JWTriangle> & trianglesMap = m_vmapTriangles[level];
+	JWTriangle* result;
+	result = trianglesMap.get(key);
+	if (result == NULL)
+	{
+		//TODO Calculate and add to map
+		return NULL;
+	}
+	else
+	{
+		return result;
+	}
+}
+
+u32 jw::JWSphere::getTriangleVertex(u32 triangle, int level, int i)
 {
 
 	JWTriangle * tr = getTriangle(triangle, level);
@@ -86,7 +107,7 @@ u32 JWSphere::getTriangleVertex(u32 triangle, int level, int i)
 				break;
 			}
 		}
-		JWTriangle * neighb = getTriangle(tr->getNeighbour(edge), level);
+		JWTriangle * neighb = getTrNeighbour(tr, level, edge);
 		int nghbEdge;
 
 		//what is the index of current triangle in the neighbor's list
@@ -107,25 +128,39 @@ u32 JWSphere::getTriangleVertex(u32 triangle, int level, int i)
 	return best->getTrIndex();
 }
 
-core::vector3df* JWSphere::getVertex(u32 key)
+void jw::JWSphere::divideTriangle(u32 triangle, int level)
 {
-	return NULL;
-}
+	if (level <= MAX_TRIANGLE_LEVELS) {
+		JWTriangle* tr = getTriangle(triangle, level);
+		JWTriangle* nghs[3];
+		for (int edge = 0; edge < 3; edge++) {
+			nghs[edge] = getTrNeighbour(tr, level, edge);
+		}
 
-JWTriangle* JWSphere::getTriangle(u32 key, int level)
-{
-	AutoCleanHashMap<JWTriangle> & trianglesMap = m_vmapTriangles[level];
-	JWTriangle* result;
-	result = trianglesMap.get(key);
-	if (result == NULL)
-	{
-		//TODO Calculate and add to map
-		return NULL;
-	}
-	else
-	{
-		return result;
+	} else {
+		log->warn("Trying to divide triangle %X at level %d > MAX_TRIANGLE_LEVELS", triangle, level);
 	}
 }
 
+JWTriangle *jw::JWSphere::getTrNeighbour(JWTriangle *triangle, int level, int edge)
+{
+	if (triangle->isNeighbourGenerated(edge)) {
+		return getTriangle(triangle->getNeighbour(edge), level);
+	} else {
+		//This should fix all links. I hope triangle is taken from the pool.
+		//divideTriangle will manage the triangle to which I have pointer
+		divideTriangle(triangle->getNeighbour(edge), level - 1);
+
+		//now triangle->isNeighbourGenerated(edge) should return true
+		return getTriangle(triangle->getNeighbour(edge), level);
+	}
 }
+
+
+
+
+
+
+
+
+

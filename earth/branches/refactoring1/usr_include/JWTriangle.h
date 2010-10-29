@@ -38,7 +38,7 @@ class JWTriangle
 	u32 m_vNeighbours[3];
 public:
 	JWTriangle();
-	JWTriangle(u32 indx, u32 v0, u32 v1, u32 v2);
+	JWTriangle(u32 indx, u32 ngh0, u32 ngh1, u32 ngh2);
 	virtual ~JWTriangle();
 	/**
 	 * Returns the index of the triangle. This value contains the "history" of the triangle. See
@@ -46,12 +46,34 @@ public:
 	 */
 	u32 getTrIndex() const;
 	void setTileIndex(u32 TileIndex);
+
+	/**
+	 * Set the IDs of neighbour triangles.
+	 * Watch out: if you know ID of triangle one level above the current,
+	 * you must also set the 1st bit of the u32 you give
+	 */
 	void setNeighbours(u32 v0, u32 v1, u32 v2);
+
+	/**
+	 * Returns the ID of a neighbour triangle.
+	 * It is possible that the triangle is not from the same level, but one level above.
+	 * This is stored in the first bit of the triangle ID. Use
+	 * sNeighbourGenerated to check whether the neighbour is from same level
+	 * \param i internal index of the neighbour - 0-2
+	 */
 	u32 getNeighbour(int i);
+
+	/**
+	 * Returns whether the ID of neighbour we have is a triangle from same level,
+	 * or from one level above
+	 *  \param i internal index of the neighbour - 0-2
+	 */
+	bool isNeighbourGenerated(int i);
 	/**
 	 * Returnes whether a triangle is "upside". A triangle is considered "upside" if 1 of his edges is above the 2 others.
 	 */
 	bool isUpside(int level);
+
 };
 
 #endif /* JWTRIANGLE_H_ */
