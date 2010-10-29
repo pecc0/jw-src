@@ -16,6 +16,10 @@
 using namespace irr;
 
 #define MAX_TRIANGLE_LEVELS 14
+//At what level triangles and vertexes are not deleted
+#define PERSISTENT_CACHED_LEVEL 7
+
+#define SPHERE_RADIUS 20.0
 
 namespace jw
 {

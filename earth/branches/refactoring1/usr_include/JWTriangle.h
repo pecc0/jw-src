@@ -55,6 +55,11 @@ public:
 	void setNeighbours(u32 v0, u32 v1, u32 v2);
 
 	/**
+	 * See #setNeighbours
+	 */
+	void setNeighbor(u32 ngh, int i);
+
+	/**
 	 * Returns the ID of a neighbour triangle.
 	 * It is possible that the triangle is not from the same level, but one level above.
 	 * This is stored in the first bit of the triangle ID. Use
@@ -69,11 +74,30 @@ public:
 	 *  \param i internal index of the neighbour - 0-2
 	 */
 	bool isNeighbourGenerated(int i);
+
+	/**
+	 * Returns the internal index of a neighbor triangle,
+	 * -1 if the triangle is not found in the neighbors
+	 *
+	 * \param trNeighbor Global index of a triangle
+	 */
+	int getNeighborInternalIndex(u32 trNeighbor);
+
 	/**
 	 * Returnes whether a triangle is "upside". A triangle is considered "upside" if 1 of his edges is above the 2 others.
 	 */
 	bool isUpside(int level);
 
+	/**
+	 * Returns the global ID of a child of this triangle.
+	 * Perform only bit operations on the ID of the current triangle.
+	 * Could be a macro
+	 *
+	 * \param internalChildIndex Internal index inside the triangle (0b00 - 0b11)
+	 * \param level The level of the current triangle (because I don't want to
+	 * save it in this class)
+	 */
+	u32 getChildIndex(u32 internalChildIndex, int level);
 };
 
 #endif /* JWTRIANGLE_H_ */
