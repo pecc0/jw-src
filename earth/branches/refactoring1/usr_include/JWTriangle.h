@@ -12,14 +12,17 @@
 
 using namespace irr;
 
+#define MAX_TRIANGLE_LEVELS 14
+
 /**
  * We will tessellate the earth into triangles. We start the tessellation from an octahedron.
  * Then we start to recursively divide each of the triangles into 4 little triangles.
- * The "history" of each received triangle is stored into its TrIndex field. The first 8 triangles
+ * The "history" of each received triangle is stored into its TrIndex. The first 8 triangles
  * of the octahedron has TrIndex 0b000 - 0b111. Then at each iteration, we occupy 2 more bits
  * of the u32 type. The child triangles are numbered 0b00 - 0b11. The center triangle is
  * always 0b11, the other triangles are numbered according to the vertex they share with
- * the parent. The level of the triangle is the iteration at which we have received the
+ * the parent. I don't store the value TrIndex here because it is used as a key in the map, so we have it there.
+ * The level of the triangle is the iteration at which we have received the
  * triangle. The triangles of the octahedron have level=0. We don't store this value because
  * it is too common and we could take it from outside. A triangle is considered
  * "upside" if 1 of its edges is above the 2 others. 4 of the octahedron triangles are "upside".
@@ -31,21 +34,14 @@ using namespace irr;
  */
 class JWTriangle
 {
-	u32 m_u32TrIndex;
 	/**
 	 * indexes of the neighbour triangles
 	 */
 	u32 m_vNeighbours[3];
 public:
 	JWTriangle();
-	JWTriangle(u32 indx, u32 ngh0, u32 ngh1, u32 ngh2);
+	JWTriangle(u32 ngh0, u32 ngh1, u32 ngh2);
 	virtual ~JWTriangle();
-	/**
-	 * Returns the index of the triangle. This value contains the "history" of the triangle. See
-	 * JWTriangle
-	 */
-	u32 getTrIndex() const;
-	void setTileIndex(u32 TileIndex);
 
 	/**
 	 * Set the IDs of neighbour triangles.
@@ -85,19 +81,59 @@ public:
 
 	/**
 	 * Returnes whether a triangle is "upside". A triangle is considered "upside" if 1 of his edges is above the 2 others.
+	 *
+	 * \param trIndex Global index of the triangle
+	 * \param level of the triangle
 	 */
-	bool isUpside(int level);
+	static bool isUpside(u32 trIndex, int level);
 
 	/**
 	 * Returns the global ID of a child of this triangle.
 	 * Perform only bit operations on the ID of the current triangle.
 	 * Could be a macro
 	 *
+	 * \param trIndex Global index of the triangle
 	 * \param internalChildIndex Internal index inside the triangle (0b00 - 0b11)
 	 * \param level The level of the current triangle (because I don't want to
 	 * save it in this class)
 	 */
-	u32 getChildIndex(u32 internalChildIndex, int level);
+	static u32 getChildIndex(u32 trIndex, u32 internalChildIndex, int level);
+
+	/**
+	 * Returns the number of the triangle inside the parent - 0b00 - 0b11;
+	 *  -1 if the triangle has not parrent
+	 */
+	static int getTriangleNumber(u32 trIndex, int level);
+
+	/**
+	 * Returns the ID of the parent triangle. level must be > 0
+	 *
+	 * \param level Level of the current triangle. The parent level is <level> - 1
+	 */
+	static u32 getParentTriangle(u32 trIndex, int level);
+
+	/**
+	 * Returns the global IDs of the 2 sub-triangles of a triangle which share
+	 * edge with certain parent's edge.
+	 */
+	static void getSubtrianglesAtEdge(u32 trIndex, int level, int edge, u32* result);
+
+	/**
+	 * For a child triangle <child> , finds at which edge in the parent is the vertex
+	 * with internal index for the child is <vertex>.
+	 * precondition: child !=  vertex - else the vertex is shared between the parent
+	 * and the child
+	 *
+	 * \param vertex interlan index of the vertex inside the child triangle [0, 2]
+	 * \param child the triangle number of the child [0, 3]
+	 */
+	static int getChildVertexEdge(int vertex, int child);
+
+	/**
+	 * For an edge in a triangle, find the subtriangle for which the middle point of the edge
+	 * is at position 0
+	 */
+	static int getEdgeRepresentor(int edge);
 };
 
 #endif /* JWTRIANGLE_H_ */

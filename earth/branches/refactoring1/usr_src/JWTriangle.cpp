@@ -10,20 +10,9 @@
 JWTriangle::JWTriangle()
 {
 }
-JWTriangle::JWTriangle(u32 indx, u32 ngh0, u32 ngh1, u32 ngh2)
+JWTriangle::JWTriangle(u32 ngh0, u32 ngh1, u32 ngh2)
 {
-	setTileIndex(indx);
 	setNeighbours(ngh0, ngh1, ngh2);
-}
-
-u32 JWTriangle::getTrIndex() const
-{
-	return m_u32TrIndex;
-}
-
-void JWTriangle::setTileIndex(u32 TileIndex)
-{
-	this->m_u32TrIndex = TileIndex;
 }
 
 void JWTriangle::setNeighbor(u32 ngh, int i)
@@ -66,14 +55,14 @@ int JWTriangle::getNeighborInternalIndex(u32 trNeighbor)
 	return -1;
 }
 
-bool JWTriangle::isUpside(int level)
+bool JWTriangle::isUpside(u32 trIndex, int level)
 {
-	bool result = (m_u32TrIndex & 0b100) == 0;
+	bool result = (trIndex & 0b100) == 0;
 	int i = level;
 	while (i > 0)
 	{
 		//i * 2 + 1 = 3 + (i - 1) * 2
-		if ((m_u32TrIndex >> (i * 2 + 1) & 0b11) == 0b11)
+		if ((trIndex >> (i * 2 + 1) & 0b11) == 0b11)
 		{
 			result = !result;
 		}
@@ -82,14 +71,89 @@ bool JWTriangle::isUpside(int level)
 	return result;
 }
 
-
-
-u32 JWTriangle::getChildIndex(u32 internalChildIndex, int level)
+u32 JWTriangle::getChildIndex(u32 trIndex, u32 internalChildIndex, int level)
 {
-	return m_u32TrIndex | (internalChildIndex << (level * 2 + 3));
+	return trIndex | (internalChildIndex << (level * 2 + 3));
 }
 
+int JWTriangle::getTriangleNumber(u32 trIndex, int level)
+{
+	if (level == 0)
+	{
+		return -1;
+	}
+	else
+	{
+		return (trIndex >> (level * 2 + 1)) & 0b11;
+	}
+}
 
+u32 JWTriangle::getParentTriangle(u32 trIndex, int level)
+{
+	//assert that level > 0
+	return trIndex & (0x7FFFFFFF >> (MAX_TRIANGLE_LEVELS * 2 - level * 2 + 2));
+}
 
+void JWTriangle::getSubtrianglesAtEdge(u32 trIndex, int level, int edge,
+		u32 *result)
+{
+	result[0] = getChildIndex(trIndex, edge, level);
+	result[1] = getChildIndex(trIndex, (edge + 1) % 3, level);
+}
 
+int JWTriangle::getChildVertexEdge(int vertex, int child)
+{
+	//I watch the picture at http://www.gamedev.net/reference/articles/article2074.asp
+	//and find the rules this way
+	if (child == 0b11)
+	{
+		return (vertex + 1) % 3;
+	}
+	else
+	{
+		//vertex != child
+		//so by watching the picture, I construct a function f(vertex, child)->edge:
+		//(0,1)=0
+		//(0,2)=2
+		//(1,0)=0
+		//(1,2)=1
+		//(2,0)=2
+		//(2,1)=1
+		//more simply, there is a rule for the sum vertex+child :
+		int sum = vertex + child;
+		if (sum == 1)
+		{
+			return 0;
+		}
+		else if (sum == 2)
+		{
+			return 2;
+		}
+		else
+		{ //sum == 3
+			return 1;
+		}
+	}
+}
+
+int JWTriangle::getEdgeRepresentor(int edge)
+{
+	//By watching at the picture http://images.gamedev.net/features/programming/procplanet1/structure.jpg,
+	//I create a function f(edge)=tr for finding the sub-triangle in which the vertex is at position 0
+	//f(0) = 1
+	//f(1) = 3
+	//f(2) = 2
+	if (edge == 0)
+	{
+		return 1;
+	}
+	else if (edge == 1)
+	{
+		return 3;
+	}
+	else
+	{ //edge == 2
+		return 2;
+	}
+}
 

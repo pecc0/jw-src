@@ -53,14 +53,14 @@ jw::JWSphere::JWSphere() :
 
 	AutoCleanHashMap<JWTriangle> & octahedronTriangles = m_vmapTriangles[0];
 
-	octahedronTriangles.put(0, JWTriangle(0b000, 0b001, 0b100, 0b010));
-	octahedronTriangles.put(1, JWTriangle(0b001, 0b000, 0b011, 0b101));
-	octahedronTriangles.put(2, JWTriangle(0b010, 0b110, 0b011, 0b000));
-	octahedronTriangles.put(3, JWTriangle(0b011, 0b001, 0b010, 0b111));
-	octahedronTriangles.put(4, JWTriangle(0b100, 0b000, 0b101, 0b110));
-	octahedronTriangles.put(5, JWTriangle(0b101, 0b111, 0b100, 0b001));
-	octahedronTriangles.put(6, JWTriangle(0b110, 0b010, 0b100, 0b111));
-	octahedronTriangles.put(7, JWTriangle(0b111, 0b101, 0b011, 0b110));
+	octahedronTriangles.put(0, JWTriangle(0b001, 0b100, 0b010));
+	octahedronTriangles.put(1, JWTriangle(0b000, 0b011, 0b101));
+	octahedronTriangles.put(2, JWTriangle(0b110, 0b011, 0b000));
+	octahedronTriangles.put(3, JWTriangle(0b001, 0b010, 0b111));
+	octahedronTriangles.put(4, JWTriangle(0b000, 0b101, 0b110));
+	octahedronTriangles.put(5, JWTriangle(0b111, 0b100, 0b001));
+	octahedronTriangles.put(6, JWTriangle(0b010, 0b100, 0b111));
+	octahedronTriangles.put(7, JWTriangle(0b101, 0b011, 0b110));
 
 	log->info("Initialize JWSphere ended");
 }
@@ -102,8 +102,7 @@ core::vector3df* jw::JWSphere::getVertex(u32 key)
 		--level;
 
 		//The ID of the parent of the triangle whose index the vertex received
-		u32 parentTriangleId = key & (0xEFFFFFFF >> (MAX_TRIANGLE_LEVELS * 2
-				- level * 2));
+		u32 parentTriangleId = JWTriangle::getParentTriangle(key, level);
 
 		divideTriangle(parentTriangleId, level);
 
@@ -121,8 +120,9 @@ JWTriangle* jw::JWSphere::getTriangle(u32 key, int level)
 	result = trianglesMap.get(key);
 	if (result == NULL)
 	{
-		//TODO Calculate and add to map
-		return NULL;
+		u32 parent = JWTriangle::getParentTriangle(key, level);
+		divideTriangle(parent, level - 1);
+		return trianglesMap.get(key);
 	}
 	else
 	{
@@ -130,57 +130,94 @@ JWTriangle* jw::JWSphere::getTriangle(u32 key, int level)
 	}
 }
 
-u32 jw::JWSphere::getTriangleVertex(u32 triangle, int level, int i)
+u32 jw::JWSphere::getTriangleVertex(u32 triangle, int level, int i,
+		bool preventGeneration)
 {
-	JWTriangle * tr = getTriangle(triangle, level);
-	int edge = i;
-	JWTriangle * best;
-	//Max 6 triangles around the vertex
-	for (int j = 0; j < 6; j++)
+	if (preventGeneration && level != 0)
 	{
-		if (edge == 0)
+		int trNumber = JWTriangle::getTriangleNumber(triangle, level);
+		if (i == trNumber)
 		{
+			//the vertex is shared between our triangle and its parent
+			return getTriangleVertex(JWTriangle::getParentTriangle(triangle,
+					level), level - 1, i, false);
+		}
+		else
+		{
+			//here I try to find the vertex ID without generating the neighbors
+			//(calling getTriangle) at level <level>
+			//This is needed while dividing the a triangle at level-1
+			//This is the case when the vertex is at the edge of the parent triangle.
+			//So, let's find the edge.
+			int edge = JWTriangle::getChildVertexEdge(i, trNumber);
+			int parentLevel = level - 1;
+			u32 parentIndex = JWTriangle::getParentTriangle(triangle, level);
 
-			if (tr->isUpside(level))
+			u32 candidateParent = JWTriangle::getChildIndex(parentIndex,
+					JWTriangle::getEdgeRepresentor(edge), parentLevel);
+
+			JWTriangle * parent = getTriangle(parentIndex, parentLevel);
+			u32 neighbIndex = parent->getNeighbour(edge);
+			JWTriangle * neighbour = getTriangle(neighbIndex, parentLevel);
+			int nghbEdge = neighbour->getNeighborInternalIndex(parentIndex);
+			u32 candidateNeighbour = JWTriangle::getChildIndex(neighbIndex,
+					JWTriangle::getEdgeRepresentor(nghbEdge), parentLevel);
+			return min(candidateParent, candidateNeighbour);
+		}
+	}
+	else
+	{
+		//go around the vertex using the neighbours
+		JWTriangle * tr = getTriangle(triangle, level);
+		int edge = i;
+		u32 bestIndex = 0xFFFFFFFF;
+		u32 startTriangle = triangle;
+		//Max 6 triangles around the vertex
+		for (int j = 0; j < 6; j++)
+		{
+			if (edge == 0)
 			{
-				best = tr;
-				break;
-			}
-			else
-			{
-				//There are cases when for same vertex is at #0 for 2 downside
-				//triangles only. I choose the lower index in this case
-				if (best == NULL || best->getTrIndex() > tr->getTrIndex())
+				if (bestIndex > triangle)
 				{
-					best = tr;
+					bestIndex = triangle;
 				}
 			}
+			u32 neighbIndex = tr->getNeighbour(edge);
+			if (startTriangle == neighbIndex)
+			{
+				//we are back to the start triangle
+				break;
+			}
+			JWTriangle * neighb = getTriangle(neighbIndex, level); //getTrNeighbour(tr, level, edge);
+
+			//what is the index of current triangle in the neighbor's list
+			int nghbEdge = neighb->getNeighborInternalIndex(triangle);
+
+			//go counterclockwise in and continue with the neighbor.
+			//This ensures we rotate around the same vertex
+			edge = (nghbEdge + 1) % 3;
+			triangle = neighbIndex;
+			tr = neighb;
 		}
-		JWTriangle * neighb = getTrNeighbour(tr, level, edge);
-
-		//what is the index of current triangle in the neighbor's list
-		int nghbEdge = neighb->getNeighborInternalIndex(tr->getTrIndex());
-
-		//go counterclockwise in and continue with the neighbor.
-		//This ensures we rotate around the same vertex
-		edge = (nghbEdge + 1) % 3;
-		tr = neighb;
+		//So we found a triangle for which the searched vertex is at index 0 and the triangle
+		//is with minimal index
+		return bestIndex;
 	}
-	//So, in worst case, we found a triangle for which the searched vertex is at index 0,
-	//and in the best case, this triangle is upside
-	return best->getTrIndex();
 }
 
 void jw::JWSphere::divideTriangle(u32 triangle, int level)
 {
+
 	if (level < MAX_TRIANGLE_LEVELS)
 	{
 		JWTriangle* tr = getTriangle(triangle, level);
 		JWTriangle* nghs[3];
+		u32 nghsIndexes[3];
 		core::vector3df* verteces[3];
 		for (int edge = 0; edge < 3; edge++)
 		{
-			nghs[edge] = getTrNeighbour(tr, level, edge);
+			nghsIndexes[edge] = tr->getNeighbour(edge);
+			nghs[edge] = getTriangle(nghsIndexes[edge], level);
 			verteces[edge]
 					= getVertex(getTriangleVertex(triangle, level, edge));
 
@@ -189,28 +226,29 @@ void jw::JWSphere::divideTriangle(u32 triangle, int level)
 		u32 newTrianglesIndexes[4];
 		for (int i = 0; i < 4; i++)
 		{
-			newTrianglesIndexes[i] = tr->getChildIndex(i, level);
+			newTrianglesIndexes[i] = JWTriangle::getChildIndex(triangle, i,
+					level);
 		}
 		for (int edge = 0; edge < 3; edge++)
 		{
+			int edge2 = (edge + 2) % 3;
 			JWTriangle* ngh1 = nghs[edge];
-			JWTriangle* ngh2 = nghs[(edge + 2) % 3];
+			JWTriangle* ngh2 = nghs[edge2];
 
 			//in most cases nghEdge will be equal to edge, but in some border cases
 			//it is not, anyway we need to handle that cases too :)
 			int nghEdge1 = ngh1->getNeighborInternalIndex(triangle);
 			int nghEdge2 = ngh2->getNeighborInternalIndex(triangle);
 
-			u32 subNgh1 = ngh1->getChildIndex((nghEdge1 + 1) % 3, level);
-			u32 subNgh2 = ngh2->getChildIndex(nghEdge2, level);
-
-			u32 subNgh3 = ngh1->getChildIndex(nghEdge1, level);
+			u32 subNgh1 = JWTriangle::getChildIndex(nghsIndexes[edge],
+					(nghEdge1 + 1) % 3, level);
+			u32 subNgh2 = JWTriangle::getChildIndex(nghsIndexes[edge2],
+					nghEdge2, level);
 
 			//u32 iV1 = tr->getChildIndex(edge, level);
 			//u32 iV2 = tr->getChildIndex((edge + 1) % 3, level);
 
 			JWTriangle newTriangle;
-			newTriangle.setTileIndex(newTrianglesIndexes[edge]);
 			newTriangle.setNeighbor(subNgh1, edge);
 			newTriangle.setNeighbor(newTrianglesIndexes[0b11], (edge + 1) % 3);
 			newTriangle.setNeighbor(subNgh2, (edge + 2) % 3);
@@ -224,56 +262,13 @@ void jw::JWSphere::divideTriangle(u32 triangle, int level)
 			core::vector3df newVertex = (*v1) + (*v2);
 			newVertex.setLength(SPHERE_RADIUS);
 
-			u32 vertexIndex;
-
-			if (tr->isUpside(level))
-			{
-				if (edge == 1)
-				{
-					if (ngh1->isUpside(level))
-					{
-						//happens rarely
-						if (nghEdge1 == 1)
-						{
-							//it's complicated - for this vertex we have 2 triangles for which the
-							//vertex is at position 0, and both of them are downside
-							vertexIndex = min(ngh1->getChildIndex(0b11, level),
-									newTrianglesIndexes[0b11]);
-						}
-						else if (nghEdge1 == 0)
-						{
-							vertexIndex = subNgh1;
-						}
-						else
-						{
-							vertexIndex = subNgh3;
-						}
-					}
-					else
-					{
-						vertexIndex = ngh1->getChildIndex(0b11, level);
-					}
-				}
-				else
-				{
-					vertexIndex = newTrianglesIndexes[(edge + 1) % 3];
-				}
-			}
-			else
-			{
-				if (edge == 1)
-				{
-					vertexIndex = newTrianglesIndexes[0b00];
-				} else {
-
-				}
-			}
+			u32 vertexIndex = getTriangleVertex(newTrianglesIndexes[3], level
+					+ 1, (edge + 2) % 3, true);
 
 			m_mapVertices.put(vertexIndex, &newVertex);
 		}
-		JWTriangle middleTriangle(newTrianglesIndexes[3],
-				newTrianglesIndexes[2], newTrianglesIndexes[0],
-				newTrianglesIndexes[1]);
+		JWTriangle middleTriangle(newTrianglesIndexes[2],
+				newTrianglesIndexes[0], newTrianglesIndexes[1]);
 
 		m_vmapTriangles[level + 1].put(newTrianglesIndexes[3], &middleTriangle);
 	}
@@ -282,6 +277,7 @@ void jw::JWSphere::divideTriangle(u32 triangle, int level)
 		log->warn("Trying to divide triangle %X at "
 			"level %d > MAX_TRIANGLE_LEVELS", triangle, level);
 	}
+
 }
 
 JWTriangle *jw::JWSphere::getTrNeighbour(JWTriangle *triangle, int level,
