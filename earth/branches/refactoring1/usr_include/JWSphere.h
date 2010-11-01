@@ -61,6 +61,8 @@ public:
     u32 getTriangleVertex(u32 triangle, int level, int i, bool preventGeneration = false);
     void divideTriangle(u32 triangle, int level);
 
+    int getTilesRow(u32 startTriangle, int level, int left, int right, u32* result);
+
     /**
      * Returns the triangles from a part of the sphere surface
      * \param startTriangle Triangle inside the required area

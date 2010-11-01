@@ -279,8 +279,8 @@ void jw::JWSphere::divideTriangle(u32 triangle, int level)
 
 }
 
-int jw::JWSphere::getTilesSquare(u32 startTriangle, int level, int left,
-		int right, int up, int down, u32 *result)
+int jw::JWSphere::getTilesRow(u32 startTriangle, int level, int left,
+		int right, u32 *result)
 {
 	u32 *resultBase = result;
 	u32 currentTr = startTriangle;
@@ -304,25 +304,74 @@ int jw::JWSphere::getTilesSquare(u32 startTriangle, int level, int left,
 	return result - resultBase;
 }
 
+int jw::JWSphere::getTilesSquare(u32 startTriangle, int level, int left, int right, int up,
+		int down, u32 *result)
+{
+	u32 *resultBase = result;
+	u32 currentTr = startTriangle;
+	int added = getTilesRow(currentTr, level, left, right, result);
+	result += added;
+	while (up)
+	{
+		currentTr = getNeighborTriangle(currentTr, level, DIR_UP);
+		added = getTilesRow(currentTr, level, left, right, result);
+		result += added;
+		--up;
+	}
+	currentTr = startTriangle;
+	while (down)
+	{
+		currentTr = getNeighborTriangle(currentTr, level, DIR_DOWN);
+		added = getTilesRow(currentTr, level, left, right, result);
+		result += added;
+		--down;
+	}
+	return result - resultBase;
+}
+
 u32 jw::JWSphere::getNeighborTriangle(u32 triangle, int level, Direction dir)
 {
 	JWTriangle* tr = getTriangle(triangle, level);
 	int leadVertex = JWTriangle::getLeadVertex(triangle, level);
-	int isUpside = leadVertex >> 2; //& 0b100
+	int isUpside = leadVertex >> 2;
 	leadVertex &= 0b11;
 	if (dir & 0b10)
 	{
 		//up/down
-		if (isUpside ^ dir)
+		if ((isUpside ^ dir) & 0b01)
 		{
-			//if the triangle is upside and we go down, or the triangle is downside and we go up
-			//the edge opposit to the lead vertex
-			return tr->getNeighbour((leadVertex + 1) % 3);
+			//if the triangle is upside and we go up, or the triangle is downside and we go down
+			int atPole = JWTriangle::checkPole(triangle, level);
+			if (atPole)
+			{
+				return 0;
+			}
+			else
+			{
+				//go round the lead vertex
+				int edge = leadVertex;
+				for (int j = 0; j < 3; j++)
+				{
+					u32 neighbIndex = tr->getNeighbour(edge);
+					JWTriangle * neighb = getTriangle(neighbIndex, level);
+
+					//what is the index of current triangle in the neighbor's list
+					int nghbEdge = neighb->getNeighborInternalIndex(triangle);
+
+					//go counterclockwise in and continue with the neighbor.
+					//This ensures we rotate around the same vertex
+					edge = (nghbEdge + 1) % 3;
+					triangle = neighbIndex;
+					tr = neighb;
+				}
+				return triangle;
+			}
 		}
 		else
 		{
-			//TODO: complicated
-			return 0;
+			//the edge opposit to the lead vertex
+			return tr->getNeighbour((leadVertex + 1) % 3);
+
 		}
 	}
 	else
@@ -332,13 +381,14 @@ u32 jw::JWSphere::getNeighborTriangle(u32 triangle, int level, Direction dir)
 		//TODO collect this in a single operation
 		if (isUpside ^ dir)
 		{
-			//if the triangle is upside and we go right,
-			//or the triangle is downside and we go left
-			return tr->getNeighbour((leadVertex + 2) % 3);
+			//if the triangle is upside and we go left,
+			//or the triangle is downside and we go right
+			return tr->getNeighbour(leadVertex);
 		}
 		else
 		{
-			return tr->getNeighbour(leadVertex);
+			return tr->getNeighbour((leadVertex + 2) % 3);
+
 		}
 	}
 }

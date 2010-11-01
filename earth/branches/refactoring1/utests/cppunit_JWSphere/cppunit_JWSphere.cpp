@@ -20,6 +20,8 @@ CPPUNIT_TEST_SUITE( TestJWSphere );
 		CPPUNIT_TEST( testOctahedronGetTriangleVertex );
 		CPPUNIT_TEST( testLvl1GetTriangleVertex );
 		CPPUNIT_TEST( testGetTriangle );
+		CPPUNIT_TEST( testGetTriangle1 );
+		CPPUNIT_TEST( testGetNeighborTriangle );
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -83,13 +85,33 @@ public:
 		CPPUNIT_ASSERT_EQUAL((u32)0b11010, tr->getNeighbour(1));
 		CPPUNIT_ASSERT_EQUAL((u32)0b10000, tr->getNeighbour(2));
 	}
+	void testGetTriangle1() {
+		JWSphere shpere;
+		JWTriangle * tr = shpere.getTriangle(0b01000, 1);
+		CPPUNIT_ASSERT_EQUAL((u32)0b00001, tr->getNeighbour(0));
+		CPPUNIT_ASSERT_EQUAL((u32)0b01100, tr->getNeighbour(1));
+		CPPUNIT_ASSERT_EQUAL((u32)0b11000, tr->getNeighbour(2));
+	}
+
+	void testGetNeighborTriangle() {
+		JWSphere shpere;
+
+		CPPUNIT_ASSERT_EQUAL((u32)0b1101001, shpere.getNeighborTriangle(0b1111001, 2, DIR_UP));
+
+		CPPUNIT_ASSERT_EQUAL((u32)0b0111101, shpere.getNeighborTriangle(0b0111001, 2, DIR_DOWN));
+
+		CPPUNIT_ASSERT_EQUAL((u32)0b00001001, shpere.getNeighborTriangle(0b00001000, 2, DIR_UP));
+
+		CPPUNIT_ASSERT_EQUAL((u32)0b101010101, shpere.getNeighborTriangle(0b001, 3, DIR_DOWN));
+
+	}
 };
 CPPUNIT_TEST_SUITE_REGISTRATION( TestJWSphere );
 
 int main()
 {
 	TestJWSphere test;
-	test.testGetTriangle();
+	test.testGetNeighborTriangle();
 
 	CPPUNIT_NS::TestResult testResult;
 	CPPUNIT_NS::TestResultCollector testsCollector;

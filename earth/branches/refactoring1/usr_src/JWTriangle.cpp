@@ -7,9 +7,8 @@
 
 #include "JWTriangle.h"
 
-//TODO fill
 int JWTriangle::s_vOctahedronTrianglesLeadVerteces[] =
-{ 4, 5, 6, 6, 0, 0, 0, 0 };
+{ 0b100, 0b101, 0b110, 0b101, 0b010, 0b001, 0b010, 0b000 };
 
 JWTriangle::JWTriangle()
 {
@@ -162,17 +161,33 @@ int JWTriangle::getEdgeRepresentor(int edge)
 
 int JWTriangle::getLeadVertex(u32 trIndex, int level)
 {
-	//TODO: I expect the 3rd bit also set in the static array
+	//The 3rd bit set in the static array
 	int result = s_vOctahedronTrianglesLeadVerteces[trIndex & 0b111];
 
 	while (level > 0)
 	{
-		if ((trIndex >> (level * 2 + 1) & 0b11) == 0b11)
+		if (((trIndex >> (level * 2 + 1)) & 0b11) == 0b11)
 		{
-			result ^= result & 0b100; //flip 3rd bit
+			result ^= 0b100; //flip 3rd bit
 		}
 		--level;
 	}
 	return result;
+}
+
+int JWTriangle::checkPole(u32 trIndex, int level)
+{
+	u32 octahedronTriangle = trIndex & 0b111; //level 0 parent of this triangle
+	int topVertex = s_vOctahedronTrianglesLeadVerteces[octahedronTriangle] & 0b11;
+	while (level > 0)
+	{
+		//near the pole, all subtriangle indexes must be equal to the lead vertex of the
+		//octahedron triangle
+		if (((trIndex >> (level * 2 + 1)) & 0b11) != topVertex) {
+			return 0;
+		}
+		--level;
+	}
+	return octahedronTriangle & 0b100 ? -1 : 1; //in the southern hemisphere the triangles has 3rd bit set
 }
 

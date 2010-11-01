@@ -147,6 +147,12 @@ public:
 	 * 0-2, 4-6
 	 */
 	static int getLeadVertex(u32 trIndex, int level);
+
+	/**
+	 * Returns 0 if the triangle is not around the pole, -1 if the triangle is around the north pole,
+	 * 1 if the triangle is around the south pole
+	 */
+	static int checkPole(u32 trIndex, int level);
 };
 
 #endif /* JWTRIANGLE_H_ */
