@@ -38,6 +38,12 @@ class JWTriangle
 	 * indexes of the neighbour triangles
 	 */
 	u32 m_vNeighbours[3];
+
+	/**
+	 * For each of the 8 octahedron triangles, I precache the "lead vertex"
+	 * TODO explain "lead vertex"
+	 */
+	static int s_vOctahedronTrianglesLeadVerteces[8];
 public:
 	JWTriangle();
 	JWTriangle(u32 ngh0, u32 ngh1, u32 ngh2);
@@ -134,6 +140,13 @@ public:
 	 * is at position 0
 	 */
 	static int getEdgeRepresentor(int edge);
+
+	/**
+	 * Return the lead vertex of the triangle in first 2 bits.
+	 * If the triangle is upside, will set the 3rd bit. So the possible results are
+	 * 0-2, 4-6
+	 */
+	static int getLeadVertex(u32 trIndex, int level);
 };
 
 #endif /* JWTRIANGLE_H_ */

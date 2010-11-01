@@ -13,12 +13,17 @@ EarthVisualization::EarthVisualization() :
 	init();
 }
 
-EarthVisualization::EarthVisualization(scene::ISceneNode* parent, scene::ISceneManager* mgr, s32 id) :
+EarthVisualization::EarthVisualization(scene::ISceneNode* parent,
+		scene::ISceneManager* mgr, s32 id) :
 	scene::ISceneNode(parent, mgr, id)
 {
 
 	m_Material.Wireframe = true;
 	m_Material.Lighting = false;
+
+	m_vVerteces = jw::AutoCleanHashMap<video::S3DVertex>(300, 1.1, 0.0);
+	m_vVerteces.init();
+
 	init();
 
 	/*
@@ -30,18 +35,22 @@ EarthVisualization::EarthVisualization(scene::ISceneNode* parent, scene::ISceneM
 	 irr::scene::ISceneNode::setAutomaticCulling() with irr::scene::EAC_OFF.
 	 */
 
-	//m_Box.reset(m_OctahedronVertices[0].Pos);
-	//for (s32 i = 1; i < 4; ++i)
-	//{
-	//	m_Box.addInternalPoint(m_OctahedronVertices[i].Pos);
-	//}
+	m_Box.reset(*(m_Sphere.getVertex(0)));
+	for (s32 i = 1; i < 8; ++i)
+	{
+		core::vector3df* v = m_Sphere.getVertex(i);
+		if (v != NULL)
+		{
+			m_Box.addInternalPoint(*v);
+		}
+	}
 }
 
 void EarthVisualization::init()
 {
 	m_vIndices = 0;
 
-	generateIndeces();
+	generateMesh();
 }
 
 void EarthVisualization::clear()
@@ -62,15 +71,19 @@ void EarthVisualization::OnRegisterSceneNode()
 	ISceneNode::OnRegisterSceneNode();
 }
 
+int g_TrCount;
+u32 g_TrianglesBuf[100];
+
 void EarthVisualization::render()
 {
-	/*video::IVideoDriver* driver = SceneManager->getVideoDriver();
+	video::IVideoDriver* driver = SceneManager->getVideoDriver();
 
 	driver->setMaterial(m_Material);
 	driver->setTransform(video::ETS_WORLD, AbsoluteTransformation);
-	driver->drawVertexPrimitiveList(&m_OctahedronVertices[0], 8, m_vIndices,
-			m_mapOctahedronTriangles.size(), video::EVT_STANDARD, scene::EPT_TRIANGLES, video::EIT_32BIT);
-			*/
+
+	driver->drawVertexPrimitiveList(m_vVerteces.getPtrPool(),
+			m_vVerteces.capacity(), m_vIndices, g_TrCount, video::EVT_STANDARD,
+			scene::EPT_TRIANGLES, video::EIT_32BIT);
 
 }
 
@@ -89,23 +102,37 @@ video::SMaterial& EarthVisualization::getMaterial(u32 i)
 	return m_Material;
 }
 
-
-void EarthVisualization::generateIndeces()
+void EarthVisualization::generateMesh()
 {
-	/*
+
 	clear();
-	m_vIndices = new u32[m_mapOctahedronTriangles.size() * 3];
 
-	int i = 0;
+	int level = 2;
 
-	TrianglesMap::iterator it = m_mapOctahedronTriangles.begin();
-	for (; it != m_mapOctahedronTriangles.end(); ++it)
+	g_TrCount = m_Sphere.getTilesSquare(0b0001000, level, 3, 15, 0, 0,
+			g_TrianglesBuf);
+
+	m_vIndices = new u32[g_TrCount * 3];
+
+	int k = 0;
+
+	for (int i = 0; i < g_TrCount; i++)
 	{
-		//it->first
-		for (int j = 2; j >= 0; --j) {
-			m_vIndices[i++] = getTriangleVertex(it->first, j);
+		for (int j = 2; j >= 0; --j)
+		{
+			u32 vertexId = m_Sphere.getTriangleVertex(g_TrianglesBuf[i], level,
+					j, false);
+			core::vector3df* ptrVertPos = m_Sphere.getVertex(vertexId);
+			video::S3DVertex vert(*ptrVertPos, *ptrVertPos,
+					video::SColor(255, 0, 255, 0), core::vector2d<f32>(0, 0));
+			vert.Normal.normalize();
+			int hash = m_vVerteces.hash(vertexId);
+			if (m_vVerteces.getPtrKeys()[hash] == EMPTY_KEY)
+			{
+				m_vVerteces.put(vertexId, &vert);
+			}
+			m_vIndices[k++] = hash;
 		}
 	}
-	*/
 }
 

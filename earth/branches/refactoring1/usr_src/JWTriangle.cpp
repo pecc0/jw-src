@@ -7,6 +7,10 @@
 
 #include "JWTriangle.h"
 
+//TODO fill
+int JWTriangle::s_vOctahedronTrianglesLeadVerteces[] =
+{ 4, 5, 6, 6, 0, 0, 0, 0 };
+
 JWTriangle::JWTriangle()
 {
 }
@@ -29,7 +33,6 @@ void JWTriangle::setNeighbours(u32 v0, u32 v1, u32 v2)
 
 JWTriangle::~JWTriangle()
 {
-	// TODO Auto-generated destructor stub
 }
 
 u32 JWTriangle::getNeighbour(int i)
@@ -155,5 +158,21 @@ int JWTriangle::getEdgeRepresentor(int edge)
 	{ //edge == 2
 		return 2;
 	}
+}
+
+int JWTriangle::getLeadVertex(u32 trIndex, int level)
+{
+	//TODO: I expect the 3rd bit also set in the static array
+	int result = s_vOctahedronTrianglesLeadVerteces[trIndex & 0b111];
+
+	while (level > 0)
+	{
+		if ((trIndex >> (level * 2 + 1) & 0b11) == 0b11)
+		{
+			result ^= result & 0b100; //flip 3rd bit
+		}
+		--level;
+	}
+	return result;
 }
 

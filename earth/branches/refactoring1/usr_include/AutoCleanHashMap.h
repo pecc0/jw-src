@@ -100,6 +100,10 @@ public:
 		return m_nSize;
 	}
 
+	int capacity() {
+		return m_nCapacity;
+	}
+
 	int hash(KEY key)
 	{
 		int iterations = 0;
@@ -231,6 +235,14 @@ public:
 		m_prtNext[last] = index;
 		m_prtPrev[m_nFirst] = index;
 		m_nFirst = index;
+	}
+
+	D *getPtrPool() const {
+		return m_ptrPool;
+	}
+
+	KEY *getPtrKeys() const {
+		return m_ptrKeys;
 	}
 
 	class Iterator

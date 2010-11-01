@@ -21,6 +21,13 @@ using namespace irr;
 
 #define SPHERE_RADIUS 20.0
 
+typedef int Direction;
+
+#define DIR_LEFT 0b00
+#define DIR_RIGHT 0b01
+#define DIR_UP 0b10
+#define DIR_DOWN 0b11
+
 namespace jw
 {
 
@@ -44,39 +51,26 @@ using namespace log;
 class JWSphere
 {
 	AutoCleanHashMap<core::vector3df> m_mapVertices;
-	AutoCleanHashMap<JWTriangle> m_vmapTriangles[MAX_TRIANGLE_LEVELS]; //14 levels of zoom
-	IJWLogger * log;
-
-	/**
-	 * Returns a neighbour of a certain triangle. If the neighbour is not yet generated,
-	 * will divide its parent. We always have the parent, or the neighbour itself in
-	 * JWTriangle::m_vNeighbours.
-	 * \param triangle Triangle whose neighbour we search.
-	 * It must be pointer to triangle in m_vmapTriangles
-	 * \param level Level where actions take place.
-	 * \edge Internal (in our triangle edges) index of the edge which is shared
-	 * between our thrianlge and the neighbour
-	 */
-	JWTriangle* getTrNeighbour(JWTriangle* triangle, int level, int edge);
-
+	AutoCleanHashMap<JWTriangle> m_vmapTriangles[MAX_TRIANGLE_LEVELS];
+    IJWLogger *log;
 public:
-	JWSphere();
-	virtual ~JWSphere();
+    JWSphere();
+    virtual ~JWSphere();
+    core::vector3df *getVertex(u32 key);
+    JWTriangle *getTriangle(u32 key, int level);
+    u32 getTriangleVertex(u32 triangle, int level, int i, bool preventGeneration = false);
+    void divideTriangle(u32 triangle, int level);
 
-	core::vector3df* getVertex(u32 key);
+    /**
+     * Returns the triangles from a part of the sphere surface
+     * \param startTriangle Triangle inside the required area
+     * \param left, right, up, down How many tiles to each of the directions from the startTriangle are required
+     * \param result Pointer to receive the triangle IDs
+     * \return the number of triangles returned
+     */
+    int getTilesSquare(u32 startTriangle, int level, int left, int right, int up, int down, u32* result);
 
-	JWTriangle* getTriangle(u32 key, int level);
-
-	/**
-	 * Returns the global ID of a vertex in triangle
-	 * \param triangle ID of a triangle
-	 * \param level
-	 * \param i internal ID of the vertex inside the triangle (0-2)
-	 */
-	u32 getTriangleVertex(u32 triangle, int level, int i, bool preventGeneration = false);
-
-	void divideTriangle(u32 triangle, int level);
-
+    u32 getNeighborTriangle(u32 triangle, int level, Direction dir);
 };
 }
 #endif /* JWSPHERE_H_ */

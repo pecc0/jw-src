@@ -67,7 +67,6 @@ jw::JWSphere::JWSphere() :
 
 jw::JWSphere::~JWSphere()
 {
-	// TODO Auto-generated destructor stub
 }
 
 core::vector3df* jw::JWSphere::getVertex(u32 key)
@@ -280,24 +279,67 @@ void jw::JWSphere::divideTriangle(u32 triangle, int level)
 
 }
 
-JWTriangle *jw::JWSphere::getTrNeighbour(JWTriangle *triangle, int level,
-		int edge)
+int jw::JWSphere::getTilesSquare(u32 startTriangle, int level, int left,
+		int right, int up, int down, u32 *result)
 {
-	return getTriangle(triangle->getNeighbour(edge), level);
-	/*
-	 if (triangle->isNeighbourGenerated(edge))
-	 {
-	 return getTriangle(triangle->getNeighbour(edge), level);
-	 }
-	 else
-	 {
-	 //This should fix all links. I hope triangle is taken from the pool.
-	 //divideTriangle will manage the triangle to which I have pointer
-	 divideTriangle(triangle->getNeighbour(edge), level - 1);
+	u32 *resultBase = result;
+	u32 currentTr = startTriangle;
+	*result = startTriangle;
+	++result;
+	while (left)
+	{
+		currentTr = getNeighborTriangle(currentTr, level, DIR_LEFT);
+		*result = currentTr;
+		++result;
+		--left;
+	}
+	currentTr = startTriangle;
+	while (right)
+	{
+		currentTr = getNeighborTriangle(currentTr, level, DIR_RIGHT);
+		*result = currentTr;
+		++result;
+		--right;
+	}
+	return result - resultBase;
+}
 
-	 //now triangle->isNeighbourGenerated(edge) should return true
-	 return getTriangle(triangle->getNeighbour(edge), level);
-	 }
-	 */
+u32 jw::JWSphere::getNeighborTriangle(u32 triangle, int level, Direction dir)
+{
+	JWTriangle* tr = getTriangle(triangle, level);
+	int leadVertex = JWTriangle::getLeadVertex(triangle, level);
+	int isUpside = leadVertex >> 2; //& 0b100
+	leadVertex &= 0b11;
+	if (dir & 0b10)
+	{
+		//up/down
+		if (isUpside ^ dir)
+		{
+			//if the triangle is upside and we go down, or the triangle is downside and we go up
+			//the edge opposit to the lead vertex
+			return tr->getNeighbour((leadVertex + 1) % 3);
+		}
+		else
+		{
+			//TODO: complicated
+			return 0;
+		}
+	}
+	else
+	{
+		//left/right
+
+		//TODO collect this in a single operation
+		if (isUpside ^ dir)
+		{
+			//if the triangle is upside and we go right,
+			//or the triangle is downside and we go left
+			return tr->getNeighbour((leadVertex + 2) % 3);
+		}
+		else
+		{
+			return tr->getNeighbour(leadVertex);
+		}
+	}
 }
 

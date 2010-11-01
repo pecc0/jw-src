@@ -11,7 +11,8 @@
 #include "ISceneNode.h"
 #include <irrlicht.h>
 #include "JWTriangle.h"
-#include <hash_map>
+#include "JWSphere.h"
+#include "AutoCleanHashMap.h"
 
 using namespace irr;
 using namespace __gnu_cxx;
@@ -24,11 +25,16 @@ using namespace __gnu_cxx;
 
 class EarthVisualization: public irr::scene::ISceneNode
 {
+	jw::JWSphere m_Sphere;
+
+	jw::AutoCleanHashMap<video::S3DVertex> m_vVerteces;
+
+	u32 * m_vIndices;
+
 	core::aabbox3d<f32> m_Box;
 
     video::SMaterial m_Material;
 
-    u32 * m_vIndices;
     void init();
     void clear();
 public:
@@ -43,7 +49,7 @@ public:
 
 	virtual video::SMaterial& getMaterial(u32 i);
 
-	void generateIndeces();
+	void generateMesh();
 };
 
 #endif /* EARTHVIS_H_ */
